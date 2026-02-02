@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { MessageCircle, X, Send } from 'lucide-react'
 
 type ChatMessage = {
@@ -78,6 +78,8 @@ export default function ChatBot() {
     },
   ])
 
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+
   // Small UX improvement: prevent body scroll shift when chatbot is open on mobile
   useEffect(() => {
     if (open) {
@@ -88,6 +90,15 @@ export default function ChatBot() {
       }
     }
   }, [open])
+
+  // Auto-scroll to latest message whenever messages change or chat opens
+  useEffect(() => {
+    if (!open) return
+    const el = messagesEndRef.current
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [messages, open])
 
   const canSend = useMemo(() => input.trim().length > 0, [input])
 
@@ -174,6 +185,7 @@ export default function ChatBot() {
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Suggested questions */}
