@@ -9,9 +9,9 @@ const skills = [
     category: 'Frontend',
     items: [
       { name: 'React', level: 90 },
-      { name: 'Next.js', level: 85 },
-      { name: 'TypeScript', level: 80 },
-      { name: 'Tailwind CSS', level: 85 },
+      { name: 'Next.js', level: 95 },
+      { name: 'TypeScript', level: 85 },
+      { name: 'Tailwind CSS', level: 95 },
     ],
   },
   {
@@ -26,19 +26,19 @@ const skills = [
   {
     category: 'AI/ML',
     items: [
-      { name: 'Machine Learning', level: 90 },
-      { name: 'Deep Learning', level: 85 },
-      { name: 'Computer Vision', level: 85 },
-      { name: 'NLP', level: 80 },
+      { name: 'Machine Learning', level: 98 },
+      { name: 'Deep Learning', level: 95 },
+      { name: 'Computer Vision', level: 95 },
+      { name: 'NLP', level: 90 },
     ],
   },
   {
     category: 'Database & Tools',
     items: [
-      { name: 'PostgreSQL', level: 85 },
-      { name: 'MongoDB', level: 75 },
+      { name: 'PostgreSQL', level: 95 },
+      { name: 'MongoDB', level: 80 },
       { name: 'Docker', level: 80 },
-      { name: 'Git', level: 90 },
+      { name: 'Git', level: 95 },
     ],
   },
 ]
