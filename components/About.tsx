@@ -63,10 +63,10 @@ export default function About() {
             className="grid grid-cols-2 gap-6"
           >
             {[
-              { label: 'Years of Experience', value: '5+' },
-              { label: 'Projects Completed', value: '50+' },
-              { label: 'Technologies', value: '20+' },
-              { label: 'Happy Clients', value: '30+' },
+              { label: 'Years of Experience', value: '2+' },
+              { label: 'Projects Completed', value: '10+' },
+              { label: 'Technologies', value: '10+' },
+              { label: 'Happy Clients', value: '10+' },
             ].map((stat, index) => (
               <div
                 key={index}
