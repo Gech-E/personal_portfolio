@@ -1,6 +1,7 @@
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Globe, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { submitContactForm } from "../lib/api";
 
 const contactInfo = [
   { icon: Mail, label: "Email", value: "getachewekubay8@gmail.com", href: "mailto:getachewekubay8@gmail.com" },
@@ -16,13 +17,31 @@ const socials = [
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
-    setForm({ name: "", email: "", subject: "", message: "" });
+    setStatus("sending");
+    setErrorMsg("");
+
+    try {
+      await submitContactForm({
+        name: form.name,
+        email: form.email,
+        message: `[${form.subject}] ${form.message}`,
+      });
+      setStatus("sent");
+      setForm({ name: "", email: "", subject: "", message: "" });
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch (err: any) {
+      // Fallback: open mailto if backend is unavailable
+      const mailto = `mailto:getachewekubay8@gmail.com?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(`From: ${form.name} (${form.email})\n\n${form.message}`)}`;
+      window.open(mailto, "_blank");
+      setStatus("sent");
+      setForm({ name: "", email: "", subject: "", message: "" });
+      setTimeout(() => setStatus("idle"), 4000);
+    }
   };
 
   return (
@@ -37,6 +56,7 @@ export function ContactSection() {
         </motion.div>
 
         <div className="grid lg:grid-cols-5 gap-10">
+          {/* Contact info */}
           <div className="lg:col-span-2 space-y-6">
             {contactInfo.map((c) => (
               <motion.a
@@ -75,6 +95,7 @@ export function ContactSection() {
             </div>
           </div>
 
+          {/* Form */}
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 20 }}
@@ -135,10 +156,19 @@ export function ContactSection() {
             </div>
             <button
               type="submit"
-              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-lg transition-colors cursor-pointer w-full justify-center sm:w-auto"
+              disabled={status === "sending"}
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white px-8 py-3 rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed w-full justify-center sm:w-auto"
               style={{ fontSize: "14px", fontWeight: 600 }}
             >
-              {sent ? "Message Sent!" : <><Send className="w-4 h-4" /> Send Message</>}
+              {status === "sending" ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
+              ) : status === "sent" ? (
+                <><CheckCircle className="w-4 h-4" /> Message Sent!</>
+              ) : status === "error" ? (
+                <><AlertCircle className="w-4 h-4" /> {errorMsg || "Try Again"}</>
+              ) : (
+                <><Send className="w-4 h-4" /> Send Message</>
+              )}
             </button>
           </motion.form>
         </div>

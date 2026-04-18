@@ -7,6 +7,7 @@ const navLinks = [
   { label: "Skills", href: "#skills" },
   { label: "Experience", href: "#experience" },
   { label: "Projects", href: "#projects" },
+  { label: "Blog", href: "#blog" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -53,6 +54,7 @@ export function Navbar() {
           GE<span className="text-emerald-400">.</span>
         </button>
 
+        {/* Desktop */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
             <button
@@ -76,11 +78,13 @@ export function Navbar() {
           </button>
         </div>
 
+        {/* Mobile toggle */}
         <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden text-white cursor-pointer">
           {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
+      {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden bg-slate-900/98 backdrop-blur-md border-t border-slate-700/50 px-6 py-4 space-y-1">
           {navLinks.map((l) => (
