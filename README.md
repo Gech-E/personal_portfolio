@@ -74,8 +74,8 @@ The backend API will run alongside the frontend, preparing to handle your RAG bo
 
 ## 🤝 Connect with Me
 
-- **LinkedIn**: [Getachew Ekubay](#)
-- **GitHub**: [@Gech-E](https://github.com/Gech-E)
+- **LinkedIn**: https://www.linkedin.com/in/getachewekubay/
+- **GitHub**: https://github.com/Gech-E/
 - **Email**: getachewekubay8@gmail.com
 
 <div align="center">
