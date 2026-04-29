@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, X, Send, Bot, User, Sparkles, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { portfolioAPI } from "@/lib/api";
+
+// ─── Client-side RAG fallback (used if backend /api/chat is unreachable) ─────
 
 interface KnowledgeChunk {
   id: string;
@@ -35,88 +38,16 @@ const knowledgeBase: KnowledgeChunk[] = [
     content: "Getachew specializes in AI/ML including Machine Learning, Deep Learning, Computer Vision, NLP, RAG (Retrieval-Augmented Generation), Agentic AI, LLM Integration, Vision Transformers (ViT), and Contrastive Learning. He works with PyTorch, TensorFlow, Scikit-learn, LangChain, Hugging Face, and OpenCV. He has built production-grade AI systems for healthcare, e-commerce, industrial automation, and startup incubation.",
   },
   {
-    id: "skills-frontend",
-    category: "skills",
-    keywords: ["frontend", "front-end", "react", "nextjs", "next.js", "tailwind", "web", "ui", "ux", "design", "interface"],
-    content: "For frontend development, Getachew is highly proficient with React and Next.js, combined with Tailwind CSS for styling. He builds responsive, performant, and accessible user interfaces. He deploys frontend applications on Vercel and has experience with modern component architectures.",
-  },
-  {
-    id: "skills-backend",
-    category: "skills",
-    keywords: ["backend", "back-end", "api", "fastapi", "flask", "server", "rest", "database", "postgresql", "mongodb", "mysql", "docker", "mlops", "architecture"],
-    content: "On the backend, Getachew works primarily with FastAPI and Flask to build RESTful APIs. He uses PostgreSQL, MySQL, and MongoDB for databases. He has expertise in MLOps, System Architecture, and containerizes applications with Docker. He follows best practices for scalable, maintainable backend architecture.",
-  },
-  {
     id: "exp-memi",
     category: "experience",
     keywords: ["experience", "work", "job", "intern", "memi", "trading", "internship", "current", "working"],
-    content: "Getachew currently works as an AI/ML Intern at Memi Trading PLC (Jun 2025 \u2013 Present). He designed and deployed 3 AI-powered applications using FastAPI + Next.js, reducing manual processing time by 65% for inventory and vendor matching. He also collaborated with cross-functional teams to integrate RAG-based medical knowledge retrieval into a clinical decision support system.",
+    content: "Getachew currently works as an AI/ML Intern at Memi Trading PLC (Jun 2025 \u2013 Present). He designed and deployed 3 AI-powered applications using FastAPI + Next.js, reducing manual processing time by 65%.",
   },
   {
     id: "exp-gemed",
     category: "experience",
     keywords: ["experience", "cto", "co-founder", "gemed", "solutions", "startup", "leadership", "lead", "founder", "company"],
-    content: "Getachew is the CTO & Co-Founder of Gemed Solutions (Dec 2025 \u2013 Present). He leads a team of 4 developers and researchers building an end-to-end AI incubation platform, securing the first 2 pilot clients within 3 months. He architected the full-stack system using React + FastAPI + PostgreSQL + Docker, supporting predictive analytics for 15+ startups.",
-  },
-  {
-    id: "exp-btwc",
-    category: "experience",
-    keywords: ["club", "born to win", "workshop", "event", "coordinator", "community", "teach", "mentor", "organize"],
-    content: "Getachew serves as Program & Event Coordinator at Born to Win Tech Club (Sep 2025 \u2013 Present). He organized 12 workshops on Generative AI and Agentic Systems, growing club membership from 45 to 180+ members. He actively mentors peers in AI/ML and software engineering.",
-  },
-  {
-    id: "proj-vendor",
-    category: "projects",
-    keywords: ["vendor", "recommendation", "matching", "procurement", "project"],
-    content: "The Vendor Recommendation System is an ML-driven platform using matrix factorization and ensemble models for intelligent vendor matching. It features a React frontend and FastAPI backend, and automated vendor selection reduced procurement time by 40%.",
-  },
-  {
-    id: "proj-ecommerce",
-    category: "projects",
-    keywords: ["ecommerce", "e-commerce", "shop", "store", "product", "collaborative filtering", "recommendation"],
-    content: "The AI-Powered E-commerce Platform is a full-stack app with collaborative filtering recommendations. Built with Next.js + FastAPI and deployed on Vercel, it provides real-time product suggestions to users based on their behavior patterns.",
-  },
-  {
-    id: "proj-clinical",
-    category: "projects",
-    keywords: ["clinical", "medical", "health", "healthcare", "doctor", "patient", "symptom", "diagnosis", "decision support"],
-    content: "The Clinical Decision Support System uses NLP and deep learning to analyze patient symptoms, with RAG-based medical knowledge retrieval for evidence-backed clinical recommendations. It helps healthcare providers make more informed decisions.",
-  },
-  {
-    id: "proj-skin",
-    category: "projects",
-    keywords: ["skin", "cancer", "classification", "dermoscopy", "cnn", "image", "medical imaging"],
-    content: "The Skin Cancer Classification project is a CNN-based dermoscopy image classifier achieving 94% accuracy. It features real-time web deployment with a React frontend and FastAPI inference server, enabling quick screening of skin lesions.",
-  },
-  {
-    id: "proj-anomaly",
-    category: "projects",
-    keywords: ["anomaly", "detection", "security", "video", "monitoring", "industrial", "surveillance", "vision"],
-    content: "The Vision-Based Anomaly Detection system uses unsupervised contrastive learning for industrial and security video monitoring. It includes a Next.js dashboard for real-time alerts and analytics, detecting unusual patterns without labeled data.",
-  },
-  {
-    id: "proj-job",
-    category: "projects",
-    keywords: ["job", "matching", "resume", "screening", "hiring", "recruitment", "career", "candidate"],
-    content: "The AI-Powered Job Matching Platform uses NLP and vector embeddings (LLM + RAG) to match candidates to optimal jobs. It features Agentic AI capabilities for automated resume screening and ranking, streamlining the recruitment process.",
-  },
-  {
-    id: "edu-1",
-    category: "education",
-    keywords: ["education", "university", "degree", "school", "study", "academic", "cgpa", "gpa", "grade", "course", "mekelle", "graduate", "graduation"],
-    content: "Getachew is pursuing a B.Sc. in Electrical & Computer Engineering at Mekelle University, with an expected graduation in July 2026. He has a CGPA of 3.93/4.0, making him a top performer. Relevant courses include AI, Data Structures & Algorithms, Computer Networks, Computer Security, Software Engineering, and Database Systems. He is recognized as an honorable graduate of 2026 and won a startup competition at Mekelle Incubation Center.",
-  },
-  {
-    id: "cert-1",
-    category: "certifications",
-    keywords: ["certification", "certificate", "coursera", "stanford", "udacity", "credential", "course", "online"],
-    content: "Getachew holds a Machine Learning Specialization from Coursera & Stanford University (March 2025) and a Full-Stack Developer Certificate from Udacity (January 2025). These certifications demonstrate his commitment to continuous learning.",
-  },
-  {
-    id: "lang-1",
-    category: "languages",
-    keywords: ["language", "speak", "english", "amharic", "tigrinya", "fluent", "native", "communication"],
-    content: "Getachew speaks three languages: Tigrinya (Native), Amharic (Fluent), and English (Fluent). This multilingual ability helps him collaborate effectively in diverse teams.",
+    content: "Getachew is the CTO & Co-Founder of Gemed Solutions (Dec 2025 \u2013 Present). He leads a team of 4 developers and researchers building an end-to-end AI incubation platform, securing the first 2 pilot clients within 3 months.",
   },
   {
     id: "projects-overview",
@@ -125,28 +56,16 @@ const knowledgeBase: KnowledgeChunk[] = [
     content: "Getachew has built 6+ notable projects: (1) Vendor Recommendation System \u2014 ML-driven vendor matching, (2) AI-Powered E-commerce Platform \u2014 collaborative filtering recommendations, (3) Clinical Decision Support System \u2014 NLP + RAG for medical knowledge, (4) Skin Cancer Classification \u2014 CNN with 94% accuracy, (5) Vision-Based Anomaly Detection \u2014 contrastive learning for video monitoring, and (6) AI-Powered Job Matching Platform \u2014 LLM + RAG + Agentic AI for recruitment.",
   },
   {
-    id: "strengths",
-    category: "strengths",
-    keywords: ["strength", "strong", "good at", "best", "specialize", "expertise", "capable", "ability", "what can", "why hire", "hire", "stand out", "unique", "different"],
-    content: "Getachew's key strengths include: (1) Strong academic foundation with 3.93 CGPA, (2) Production-grade AI/ML experience across healthcare, e-commerce, and startups, (3) Full-stack proficiency from React/Next.js to FastAPI/PostgreSQL, (4) Leadership as CTO of Gemed Solutions managing a team of 4, (5) Community impact through 12+ workshops reaching 180+ members, and (6) Expertise in cutting-edge AI: RAG pipelines, Agentic AI, and LLM integration.",
+    id: "edu-1",
+    category: "education",
+    keywords: ["education", "university", "degree", "school", "study", "academic", "cgpa", "gpa", "grade", "course", "mekelle", "graduate", "graduation"],
+    content: "Getachew is pursuing a B.Sc. in Electrical & Computer Engineering at Mekelle University, with an expected graduation in July 2026. He has a CGPA of 3.93/4.0, making him a top performer. He won a startup competition at Mekelle Incubation Center.",
   },
   {
     id: "availability",
     category: "availability",
     keywords: ["available", "hire", "open", "looking", "opportunity", "freelance", "remote", "full-time", "part-time", "collaborate", "position", "role"],
-    content: "Getachew is currently open to new opportunities in AI/ML Engineering and Full-Stack Development roles. He is available for full-time positions, internships, and collaborative projects. He is particularly interested in roles involving RAG systems, Agentic AI, computer vision, and full-stack web application development. You can reach out via email at getachewekubay8@gmail.com.",
-  },
-  {
-    id: "robotics-1",
-    category: "skills",
-    keywords: ["robotics", "robot", "automation", "control", "control systems", "intelligent", "industrial", "hardware", "embedded", "c++"],
-    content: "Getachew has expertise in Robotics and Intelligent Control Systems & Automation. He works at the intersection of software intelligence and physical-world applications, bridging AI/ML with embedded and industrial systems. He is proficient in C++ for systems-level programming and has experience designing automation pipelines for industrial environments.",
-  },
-  {
-    id: "approach-1",
-    category: "bio",
-    keywords: ["approach", "methodology", "how", "process", "end-to-end", "philosophy", "style", "work style", "method"],
-    content: "Getachew's approach is end-to-end: he doesn't just train models \u2014 he builds the robust full-stack architectures required to integrate them into real-world industrial environments. Whether it's researching vision-based anomaly detection using contrastive learning or engineering digital automation platforms, he thrives on turning complex data into actionable, high-impact systems. He is driven by continuous learning and building systems that are not only functional but also scalable and intelligent.",
+    content: "Getachew is currently open to new opportunities in AI/ML Engineering and Full-Stack Development roles. He is available for full-time positions, internships, and collaborative projects. You can reach out via email at getachewekubay8@gmail.com.",
   },
 ];
 
@@ -160,10 +79,8 @@ function tokenize(text: string): string[] {
 
 function retrieveChunks(query: string, topK = 3): KnowledgeChunk[] {
   const queryTokens = tokenize(query);
-
   const scored = knowledgeBase.map((chunk) => {
     let score = 0;
-
     for (const kw of chunk.keywords) {
       const kwTokens = tokenize(kw);
       for (const qt of queryTokens) {
@@ -173,7 +90,6 @@ function retrieveChunks(query: string, topK = 3): KnowledgeChunk[] {
         }
       }
     }
-
     const contentTokens = tokenize(chunk.content);
     for (const qt of queryTokens) {
       for (const ct of contentTokens) {
@@ -181,14 +97,11 @@ function retrieveChunks(query: string, topK = 3): KnowledgeChunk[] {
         else if (ct.includes(qt) && qt.length > 3) score += 1;
       }
     }
-
     for (const qt of queryTokens) {
       if (chunk.category.includes(qt)) score += 8;
     }
-
     return { chunk, score };
   });
-
   return scored
     .filter((s) => s.score > 0)
     .sort((a, b) => b.score - a.score)
@@ -196,77 +109,37 @@ function retrieveChunks(query: string, topK = 3): KnowledgeChunk[] {
     .map((s) => s.chunk);
 }
 
-function generateResponse(query: string): string {
+function generateLocalResponse(query: string): string {
   const q = query.toLowerCase().trim();
-
   if (/^(hi|hello|hey|howdy|sup|greetings|good (morning|afternoon|evening))/.test(q)) {
     return "Hey there! \ud83d\udc4b I'm Getachew's AI assistant, powered by his resume data. I can answer questions about his skills, projects, experience, education, and more. What would you like to know?";
   }
-
   if (/^(thanks|thank you|thx|ty|appreciate)/.test(q)) {
     return "You're welcome! Feel free to ask anything else about Getachew's background, or scroll down to the Contact section to reach out directly. \ud83d\ude0a";
   }
-
   const chunks = retrieveChunks(query);
-
   if (chunks.length === 0) {
     return "I'm specifically trained on Getachew's resume and professional background. I can help with questions about his **skills**, **projects**, **experience**, **education**, **certifications**, or **contact info**. Could you rephrase your question?";
   }
-
   const categories = [...new Set(chunks.map((c) => c.category))];
-
   if (categories.includes("projects") && chunks.length > 1) {
-    return formatProjectResponse(chunks);
+    return chunks.filter((c) => c.category === "projects").map((c) => c.content).join("\n\n");
   }
-
   if (categories.includes("skills") && chunks.length >= 2) {
-    return formatSkillsResponse(chunks);
+    return chunks.map((c) => c.content).join("\n\n");
   }
-
   const topChunk = chunks[0];
   let response = topChunk.content;
-
-  const suggestions = getSuggestions(categories);
-  if (suggestions) {
-    response += `\n\n\ud83d\udca1 *You can also ask about ${suggestions}.*`;
-  }
-
+  const allCategories: Record<string, string> = {
+    bio: "his background", skills: "his technical skills", experience: "his work experience",
+    projects: "his projects", education: "his education", certifications: "his certifications", contact: "how to contact him",
+  };
+  const available = Object.entries(allCategories).filter(([key]) => !categories.includes(key)).slice(0, 2).map(([, val]) => val);
+  if (available.length) response += `\n\n\ud83d\udca1 *You can also ask about ${available.join(" or ")}.*`;
   return response;
 }
 
-function formatProjectResponse(chunks: KnowledgeChunk[]): string {
-  const projectChunks = chunks.filter((c) => c.category === "projects");
-  if (projectChunks.length === 0) return chunks[0].content;
-
-  let response = "";
-  for (const chunk of projectChunks) {
-    response += chunk.content + "\n\n";
-  }
-  return response.trim();
-}
-
-function formatSkillsResponse(chunks: KnowledgeChunk[]): string {
-  return chunks.map((c) => c.content).join("\n\n");
-}
-
-function getSuggestions(currentCategories: string[]): string {
-  const allCategories: Record<string, string> = {
-    bio: "his background",
-    skills: "his technical skills",
-    experience: "his work experience",
-    projects: "his projects",
-    education: "his education",
-    certifications: "his certifications",
-    contact: "how to contact him",
-  };
-
-  const available = Object.entries(allCategories)
-    .filter(([key]) => !currentCategories.includes(key))
-    .slice(0, 2)
-    .map(([, val]) => val);
-
-  return available.join(" or ");
-}
+// ─── Component ──────────────────────────────────────────────────────
 
 const suggestedQuestions = [
   "Who is Getachew?",
@@ -311,7 +184,7 @@ export function ChatBot() {
     if (isOpen) inputRef.current?.focus();
   }, [isOpen]);
 
-  const handleSend = (text?: string) => {
+  const handleSend = async (text?: string) => {
     const msg = (text || input).trim();
     if (!msg) return;
 
@@ -326,18 +199,25 @@ export function ChatBot() {
     setInput("");
     setIsTyping(true);
 
-    const delay = 600 + Math.random() * 800;
-    setTimeout(() => {
-      const response = generateResponse(msg);
-      const assistantMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: response,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMsg]);
-      setIsTyping(false);
-    }, delay);
+    let responseText: string;
+
+    try {
+      // Try backend first
+      const data = await portfolioAPI.chat(msg);
+      responseText = data.response;
+    } catch {
+      // Fallback to client-side RAG
+      responseText = generateLocalResponse(msg);
+    }
+
+    const assistantMsg: ChatMessage = {
+      id: (Date.now() + 1).toString(),
+      role: "assistant",
+      content: responseText,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, assistantMsg]);
+    setIsTyping(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -507,7 +387,7 @@ export function ChatBot() {
                 </button>
               </div>
               <p className="text-center text-slate-600 mt-2" style={{ fontSize: "10px" }}>
-                RAG-powered \u00b7 Retrieves from 20+ knowledge chunks
+                RAG-powered \u00b7 Backend + client-side fallback
               </p>
             </div>
           </motion.div>

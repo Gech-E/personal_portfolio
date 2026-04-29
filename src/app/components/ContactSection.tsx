@@ -1,6 +1,7 @@
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Globe, CheckCircle, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { portfolioAPI } from "@/lib/api";
 
 const contactInfo = [
   { icon: Mail, label: "Email", value: "getachewekubay8@gmail.com", href: "mailto:getachewekubay8@gmail.com" },
@@ -16,13 +17,25 @@ const socials = [
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
-    setForm({ name: "", email: "", subject: "", message: "" });
+    setStatus("sending");
+    setErrorMsg("");
+
+    try {
+      await portfolioAPI.submitContact(form);
+      setStatus("sent");
+      setForm({ name: "", email: "", subject: "", message: "" });
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch (err: any) {
+      console.warn("Contact submit failed:", err.message);
+      setStatus("error");
+      setErrorMsg("Failed to send. Please try again or email directly.");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
   };
 
   return (
@@ -133,12 +146,37 @@ export function ContactSection() {
                 required
               />
             </div>
+
+            {/* Status feedback */}
+            {status === "sent" && (
+              <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2.5" style={{ fontSize: "13px" }}>
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                Message sent successfully! I'll get back to you soon.
+              </div>
+            )}
+            {status === "error" && (
+              <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2.5" style={{ fontSize: "13px" }}>
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {errorMsg}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-lg transition-colors cursor-pointer w-full justify-center sm:w-auto"
+              disabled={status === "sending"}
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white px-8 py-3 rounded-lg transition-colors cursor-pointer w-full justify-center sm:w-auto disabled:cursor-not-allowed"
               style={{ fontSize: "14px", fontWeight: 600 }}
             >
-              {sent ? "Message Sent!" : <><Send className="w-4 h-4" /> Send Message</>}
+              {status === "sending" ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Sending...
+                </>
+              ) : status === "sent" ? (
+                "Message Sent!"
+              ) : (
+                <><Send className="w-4 h-4" /> Send Message</>
+              )}
             </button>
           </motion.form>
         </div>

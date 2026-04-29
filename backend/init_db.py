@@ -1,88 +1,120 @@
 """
-Script to initialize the database with sample data
+Script to initialize the database with sample data matching the frontend
 """
 from database import SessionLocal, engine, Base
-from models import Project, Skill
-import json
+from models import Project, Skill, ContactMessage
+from sqlalchemy import text
 
-# Create tables
+# Drop and recreate tables to pick up new columns
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
-# Sample projects
+# Projects matching the frontend exactly
 sample_projects = [
     {
-        "title": "AI-Powered E-Commerce Platform",
-        "description": "Full-stack e-commerce solution with ML-based recommendation system, computer vision for product search, and real-time inventory management.",
-        "technologies": ["Next.js", "FastAPI", "PostgreSQL", "ML", "CV"],
-        "github_url": "https://github.com",
-        "demo_url": "https://demo.com",
+        "title": "Vendor Recommendation System",
+        "description": "ML-driven vendor matching using matrix factorization & ensemble models with a React frontend and FastAPI backend. Automated vendor selection reduced procurement time by 40%.",
+        "technologies": ["Python", "FastAPI", "React", "Scikit-learn", "PostgreSQL"],
+        "icon_name": "Brain",
+        "color": "#34d399",
+        "category": "AI/ML,Full-Stack",
+        "github_url": "https://github.com/Gech-E",
     },
     {
-        "title": "NLP Sentiment Analysis API",
-        "description": "RESTful API for real-time sentiment analysis using deep learning models. Processes text data and provides sentiment scores with high accuracy.",
-        "technologies": ["FastAPI", "Python", "NLP", "Deep Learning", "Docker"],
-        "github_url": "https://github.com",
-        "demo_url": "https://demo.com",
+        "title": "AI-Powered E-commerce Platform",
+        "description": "Full-stack e-commerce app with collaborative filtering recommendations. Built with Next.js + FastAPI, deployed on Vercel with real-time product suggestions.",
+        "technologies": ["Next.js", "FastAPI", "TensorFlow", "PostgreSQL", "Vercel"],
+        "icon_name": "ShoppingCart",
+        "color": "#3b82f6",
+        "category": "AI/ML,Full-Stack",
+        "github_url": "https://github.com/Gech-E",
     },
     {
-        "title": "Computer Vision Object Detection",
-        "description": "Real-time object detection system using YOLO and custom deep learning models. Web interface for uploading and analyzing images.",
-        "technologies": ["React", "Flask", "CV", "Deep Learning", "OpenCV"],
-        "github_url": "https://github.com",
-        "demo_url": "https://demo.com",
+        "title": "Clinical Decision Support System",
+        "description": "NLP & deep learning model analyzing patient symptoms with RAG-based medical knowledge retrieval for evidence-backed clinical recommendations.",
+        "technologies": ["Python", "LangChain", "RAG", "PyTorch", "FastAPI"],
+        "icon_name": "Stethoscope",
+        "color": "#f472b6",
+        "category": "AI/ML,Full-Stack",
+        "github_url": "https://github.com/Gech-E",
     },
     {
-        "title": "ML Model Deployment Platform",
-        "description": "Platform for deploying and managing machine learning models with versioning, A/B testing, and monitoring capabilities.",
-        "technologies": ["Next.js", "FastAPI", "PostgreSQL", "ML", "Docker"],
-        "github_url": "https://github.com",
-        "demo_url": "https://demo.com",
+        "title": "Skin Cancer Classification",
+        "description": "CNN-based dermoscopy image classifier achieving 94% accuracy. Real-time web deployment with React frontend and FastAPI inference server.",
+        "technologies": ["PyTorch", "OpenCV", "React", "FastAPI", "Docker"],
+        "icon_name": "Eye",
+        "color": "#fbbf24",
+        "category": "AI/ML,Computer Vision,Full-Stack",
+        "github_url": "https://github.com/Gech-E",
+    },
+    {
+        "title": "Vision-Based Anomaly Detection",
+        "description": "Unsupervised industrial/security video monitoring using contrastive learning. Next.js dashboard for real-time alerts and analytics.",
+        "technologies": ["PyTorch", "OpenCV", "Next.js", "Contrastive Learning"],
+        "icon_name": "AlertTriangle",
+        "color": "#f97316",
+        "category": "AI/ML,Computer Vision",
+        "github_url": "https://github.com/Gech-E",
+    },
+    {
+        "title": "AI-Powered Job Matching Platform",
+        "description": "NLP + vector embeddings (LLM + RAG) matching candidates to optimal jobs. Agentic AI features for automated resume screening and ranking.",
+        "technologies": ["LangChain", "Hugging Face", "Next.js", "Agentic AI", "RAG"],
+        "icon_name": "Search",
+        "color": "#8b5cf6",
+        "category": "AI/ML,Full-Stack",
+        "github_url": "https://github.com/Gech-E",
     },
 ]
 
-# Sample skills
+# Skills matching the frontend exactly
 sample_skills = [
+    # Languages
+    {"name": "Python", "category": "Languages", "level": 95},
+    {"name": "JavaScript", "category": "Languages", "level": 90},
+    {"name": "TypeScript", "category": "Languages", "level": 88},
+    {"name": "C++", "category": "Languages", "level": 82},
+    {"name": "SQL", "category": "Languages", "level": 85},
     # Frontend
-    {"name": "React", "category": "Frontend", "level": 90},
-    {"name": "Next.js", "category": "Frontend", "level": 85},
-    {"name": "TypeScript", "category": "Frontend", "level": 80},
-    {"name": "Tailwind CSS", "category": "Frontend", "level": 85},
-    # Backend
-    {"name": "Python", "category": "Backend", "level": 95},
-    {"name": "FastAPI", "category": "Backend", "level": 90},
-    {"name": "Flask", "category": "Backend", "level": 85},
-    {"name": "RESTful APIs", "category": "Backend", "level": 90},
-    # AI/ML
-    {"name": "Machine Learning", "category": "AI/ML", "level": 90},
-    {"name": "Deep Learning", "category": "AI/ML", "level": 85},
-    {"name": "Computer Vision", "category": "AI/ML", "level": 85},
-    {"name": "NLP", "category": "AI/ML", "level": 80},
-    # Database & Tools
-    {"name": "PostgreSQL", "category": "Database & Tools", "level": 85},
-    {"name": "MongoDB", "category": "Database & Tools", "level": 75},
-    {"name": "Docker", "category": "Database & Tools", "level": 80},
-    {"name": "Git", "category": "Database & Tools", "level": 90},
+    {"name": "React", "category": "Frontend", "level": 92},
+    {"name": "Next.js", "category": "Frontend", "level": 90},
+    {"name": "Tailwind CSS", "category": "Frontend", "level": 93},
+    # Backend & Databases
+    {"name": "FastAPI", "category": "Backend & Databases", "level": 90},
+    {"name": "Flask", "category": "Backend & Databases", "level": 82},
+    {"name": "PostgreSQL", "category": "Backend & Databases", "level": 85},
+    {"name": "MLOps", "category": "Backend & Databases", "level": 80},
+    # AI / ML
+    {"name": "PyTorch", "category": "AI / ML", "level": 88},
+    {"name": "TensorFlow", "category": "AI / ML", "level": 85},
+    {"name": "LangChain", "category": "AI / ML", "level": 86},
+    {"name": "Hugging Face", "category": "AI / ML", "level": 84},
+    {"name": "OpenCV", "category": "AI / ML", "level": 80},
+    {"name": "Vision Transformers", "category": "AI / ML", "level": 82},
+    # DevOps & Tools
+    {"name": "Docker", "category": "DevOps & Tools", "level": 80},
+    {"name": "Git", "category": "DevOps & Tools", "level": 90},
+    {"name": "System Architecture", "category": "DevOps & Tools", "level": 85},
+    {"name": "Robotics & Automation", "category": "DevOps & Tools", "level": 78},
 ]
 
 try:
     # Add projects
     for project_data in sample_projects:
-        existing = db.query(Project).filter(Project.title == project_data["title"]).first()
-        if not existing:
-            project = Project(**project_data)
-            db.add(project)
-    
+        project = Project(**project_data)
+        db.add(project)
+
     # Add skills
     for skill_data in sample_skills:
-        existing = db.query(Skill).filter(Skill.name == skill_data["name"]).first()
-        if not existing:
-            skill = Skill(**skill_data)
-            db.add(skill)
-    
+        skill = Skill(**skill_data)
+        db.add(skill)
+
     db.commit()
     print("Database initialized successfully!")
+    print(f"  - {len(sample_projects)} projects added")
+    print(f"  - {len(sample_skills)} skills added")
 except Exception as e:
     print(f"Error initializing database: {e}")
     db.rollback()

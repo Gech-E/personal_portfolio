@@ -1,6 +1,9 @@
 import { motion } from "motion/react";
+import { useState, useEffect } from "react";
+import { portfolioAPI, type SkillFromAPI } from "@/lib/api";
 
-const skillCategories = [
+// Hardcoded fallback
+const fallbackSkillCategories = [
   {
     title: "Languages",
     skills: [
@@ -57,7 +60,36 @@ const coreDomains = [
   "Contrastive Learning", "Robotics & Automation",
 ];
 
+interface SkillCategory {
+  title: string;
+  skills: { name: string; level: number }[];
+}
+
+function groupSkills(apiSkills: SkillFromAPI[]): SkillCategory[] {
+  const groups: Record<string, { name: string; level: number }[]> = {};
+  for (const s of apiSkills) {
+    if (!groups[s.category]) groups[s.category] = [];
+    groups[s.category].push({ name: s.name, level: s.level });
+  }
+  return Object.entries(groups).map(([title, skills]) => ({ title, skills }));
+}
+
 export function SkillsSection() {
+  const [skillCategories, setSkillCategories] = useState<SkillCategory[]>(fallbackSkillCategories);
+
+  useEffect(() => {
+    portfolioAPI
+      .getSkills()
+      .then((data) => {
+        if (data.length > 0) {
+          setSkillCategories(groupSkills(data));
+        }
+      })
+      .catch((err) => {
+        console.warn("Using fallback skills:", err.message);
+      });
+  }, []);
+
   return (
     <section id="skills" className="py-20" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1e293b 100%)" }}>
       <div className="max-w-6xl mx-auto px-6">
