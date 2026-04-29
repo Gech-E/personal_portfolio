@@ -1,246 +1,83 @@
-# Personal Portfolio - Python Full Stack & AI/ML Engineer
+<div align="center">
+  <h1>✨ Getachew Ekubay | Personal Portfolio ✨</h1>
+  <p><strong>A modern, interactive portfolio for a Full-Stack Developer & AI/ML Engineer.</strong></p>
+  
+  <p>
+    <img alt="React" src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" />
+    <img alt="TypeScript" src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" />
+    <img alt="TailwindCSS" src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+    <img alt="Vite" src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white" />
+    <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" />
+  </p>
+</div>
 
-A modern, responsive personal portfolio website showcasing Python full stack development and AI/ML engineering projects.
+<br />
 
-## Tech Stack
+## 🚀 Overview
+Welcome to my personal portfolio repository! This project serves as a central hub for showcasing my technical skills, professional experience, ongoing projects, and thoughts on technology. Designed with a sleek dark mode and smooth animations, it also features an integrated AI/ML architecture.
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS, Framer Motion
-- **Backend**: FastAPI, Python
-- **Database**: PostgreSQL
-- **Skills Highlighted**: React, Next.js, Flask, FastAPI, ML, DL, CV, NLP
+## 🎯 Key Features
+- **Responsive & Modern UI**: Built with React and Tailwind CSS, featuring glassmorphism and beautiful micro-animations for an elevated user experience.
+- **RAG Assistant**: An intelligent chatbot powered by advanced Retrieval-Augmented Generation (RAG) to intuitively answer questions about my experience and work.
+- **Project Showcase**: An organized catalog displaying my latest full-stack and AI engineering work, complete with dynamic filtering and categorization.
+- **Dynamic Contact Form**: Keep in touch effortlessly via a functional seamless contact form.
 
-## Features
+## 💻 Technologies Used
+### Frontend
+- **Framework**: React 18
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS & Emotion
+- **Animations**: Framer Motion & TW-Animate-CSS
+- **Build Tool**: Vite
 
-- 🎨 Modern, responsive design with smooth animations
-- 📱 Mobile-first approach
-- 🚀 Fast performance with Next.js
-- 🔒 RESTful API with FastAPI
-- 💾 PostgreSQL database for data persistence
-- 📧 Contact form with backend integration
-- 🎯 Skills showcase with progress bars
-- 💼 Project portfolio with filtering
+### Backend
+- **Framework**: FastAPI (Python)
+- **Database**: PostgreSQL / SQLite (managed via SQLAlchemy)
 
-## Project Structure
+---
 
+## 🛠️ Running Locally
+
+Follow the steps below to spin up both the front-end interface and back-end environments.
+
+### 1. Frontend Setup
+Navigate to the root directory and install the necessary Node dependencies.
+```bash
+# Install dependencies
+npm i
+
+# Start the Vite development server
+npm run dev
 ```
-personal_portfolio/
-├── app/                    # Next.js app directory
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Home page
-│   └── globals.css        # Global styles
-├── components/             # React components
-│   ├── Navbar.tsx         # Navigation bar
-│   ├── Hero.tsx           # Hero section
-│   ├── About.tsx          # About section
-│   ├── Skills.tsx         # Skills section
-│   ├── Projects.tsx       # Projects section
-│   ├── Contact.tsx        # Contact form
-│   └── Footer.tsx         # Footer
-├── backend/                # FastAPI backend
-│   ├── main.py            # FastAPI application
-│   ├── database.py        # Database configuration
-│   ├── models.py          # SQLAlchemy models
-│   ├── requirements.txt   # Python dependencies
-│   └── init_db.py         # Database initialization script
-└── package.json           # Node.js dependencies
+The frontend will accessible at `http://localhost:5173`.
+
+### 2. Backend Setup
+Navigate into the backend portion and install the Python requirements.
+```bash
+cd backend
+
+# (Optional but recommended) Create a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install requirements
+pip install -r requirements.txt
+
+# Start the FastAPI server
+python main.py
+# Or run via script
+./run.sh  # (or run.bat on Windows)
 ```
+The backend API will run alongside the frontend, preparing to handle your RAG bot connections and logical operations.
 
-## Getting Started
+---
 
-### Prerequisites
+## 🤝 Connect with Me
 
-- Node.js 18+ and npm/yarn
-- Python 3.9+
-- PostgreSQL 12+
+- **LinkedIn**: https://www.linkedin.com/in/getachewekubay/
+- **GitHub**: https://github.com/Gech-E/
+- **Email**: getachewekubay8@gmail.com
 
-### Installation
-
-#### Option 1: Using Docker (Recommended)
-
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd personal_portfolio
-   ```
-
-2. **Start PostgreSQL with Docker**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Install frontend dependencies**
-   ```bash
-   npm install
-   ```
-
-4. **Set up Python virtual environment**
-   ```bash
-   cd backend
-   python -m venv venv
-   
-   # On Windows
-   venv\Scripts\activate
-   
-   # On macOS/Linux
-   source venv/bin/activate
-   ```
-
-5. **Install backend dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-6. **Configure environment variables**
-   
-   **Backend** (from `backend/` directory):
-   ```bash
-   cp .env.example .env
-   # The default DATABASE_URL should work with Docker
-   ```
-   
-   **Frontend** (from root directory):
-   ```bash
-   cp .env.example .env.local
-   # Update NEXT_PUBLIC_API_URL if your backend runs on a different port
-   ```
-
-7. **Initialize the database**
-   ```bash
-   python init_db.py
-   ```
-
-#### Option 2: Manual Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd personal_portfolio
-   ```
-
-2. **Install frontend dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up PostgreSQL database**
-   ```bash
-   # Create database
-   createdb portfolio_db
-   ```
-
-4. **Set up Python virtual environment**
-   ```bash
-   cd backend
-   python -m venv venv
-   
-   # On Windows
-   venv\Scripts\activate
-   
-   # On macOS/Linux
-   source venv/bin/activate
-   ```
-
-5. **Install backend dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-6. **Configure environment variables**
-   ```bash
-   cd backend
-   cp .env.example .env
-   # Edit .env with your database credentials
-   ```
-
-7. **Initialize the database**
-   ```bash
-   python init_db.py
-   ```
-
-### Running the Application
-
-1. **Start PostgreSQL** (if using Docker)
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Start the backend server** (from `backend/` directory)
-   ```bash
-   # On Windows
-   run.bat
-   
-   # On macOS/Linux
-   chmod +x run.sh
-   ./run.sh
-   
-   # Or manually
-   python main.py
-   # or
-   uvicorn main:app --reload
-   ```
-   Backend will run on `http://localhost:8000`
-
-3. **Start the frontend server** (from root directory)
-   ```bash
-   npm run dev
-   ```
-   Frontend will run on `http://localhost:3000`
-
-4. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Documentation: http://localhost:8000/docs
-
-## API Endpoints
-
-- `GET /api/projects` - Get all projects
-- `POST /api/projects` - Create a new project
-- `GET /api/projects/{id}` - Get a specific project
-- `POST /api/contact` - Submit contact form
-- `GET /api/contact` - Get all contact messages
-- `GET /api/skills` - Get all skills
-
-## Customization
-
-### Update Personal Information
-
-1. **Hero Section**: Edit `components/Hero.tsx`
-2. **About Section**: Edit `components/About.tsx`
-3. **Skills**: Edit the `skills` array in `components/Skills.tsx` or use the API
-4. **Projects**: Edit the `projects` array in `components/Projects.tsx` or use the API
-5. **Contact Email**: Update email addresses in `components/Hero.tsx`, `components/Contact.tsx`, and `components/Footer.tsx`
-
-### Styling
-
-- Colors: Edit `tailwind.config.js` to customize the color scheme
-- Global styles: Modify `app/globals.css`
-
-## Deployment
-
-### Frontend (Vercel/Netlify)
-
-1. Build the project: `npm run build`
-2. Deploy to Vercel or Netlify
-3. Update API URLs in production
-
-### Backend (Railway/Heroku/Render)
-
-1. Set environment variables (DATABASE_URL)
-2. Deploy the FastAPI application
-3. Run database migrations
-
-### Database
-
-- Use managed PostgreSQL services like:
-  - AWS RDS
-  - Railway
-  - Supabase
-  - Render
-
-## License
-
-MIT License - feel free to use this portfolio for your own projects!
-
-## Contact
-
-For questions or suggestions, please open an issue or contact via the portfolio contact form.
+<div align="center">
+  <p><i>Building intelligent systems that solve real-world problems. 🌍</i></p>
+</div>

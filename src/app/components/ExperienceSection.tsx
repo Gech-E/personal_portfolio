@@ -6,7 +6,7 @@ const experience = [
     type: "work",
     role: "AI/ML Intern",
     org: "Memi Trading PLC",
-    period: "Jun 2025 \u2013 Present",
+    period: "Jun 2025 – Present",
     bullets: [
       "Designed and deployed 3 AI-powered applications using FastAPI + Next.js, reducing manual processing time by 65%.",
       "Integrated RAG-based medical knowledge retrieval into a clinical decision support system.",
@@ -16,7 +16,7 @@ const experience = [
     type: "work",
     role: "CTO & Co-Founder",
     org: "Gemed Solutions",
-    period: "Dec 2025 \u2013 Present",
+    period: "Dec 2025 – Present",
     bullets: [
       "Lead a team of 4 building an end-to-end AI incubation platform; secured 2 pilot clients in 3 months.",
       "Architected full-stack system (React + FastAPI + PostgreSQL + Docker) for 15+ startups.",
@@ -26,7 +26,7 @@ const experience = [
     type: "work",
     role: "Program & Event Coordinator",
     org: "Born to Win Tech Club",
-    period: "Sep 2025 \u2013 Present",
+    period: "Sep 2025 – Present",
     bullets: [
       "Organized 12 workshops on Generative AI and Agentic Systems, growing membership from 45 to 180+.",
     ],
@@ -57,6 +57,7 @@ export function ExperienceSection() {
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* Experience timeline */}
           <div className="lg:col-span-2 space-y-0">
             <h3 className="text-white flex items-center gap-2 mb-6" style={{ fontSize: "18px", fontWeight: 600 }}>
               <Briefcase className="w-5 h-5 text-emerald-400" /> Work Experience
@@ -81,7 +82,7 @@ export function ExperienceSection() {
                     <ul className="space-y-1.5">
                       {exp.bullets.map((b, j) => (
                         <li key={j} className="text-slate-400 flex gap-2" style={{ fontSize: "13px", lineHeight: 1.65 }}>
-                          <span className="text-emerald-400 mt-1.5 shrink-0">\u2022</span>
+                          <span className="text-emerald-400 mt-1.5 shrink-0">•</span>
                           {b}
                         </li>
                       ))}
@@ -92,6 +93,7 @@ export function ExperienceSection() {
             </div>
           </div>
 
+          {/* Education + Certs */}
           <div className="space-y-8">
             <div>
               <h3 className="text-white flex items-center gap-2 mb-6" style={{ fontSize: "18px", fontWeight: 600 }}>

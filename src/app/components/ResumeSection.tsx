@@ -37,7 +37,7 @@ export function ResumeSection() {
             </div>
             <div className="flex-1">
               <h3 className="text-white mb-1" style={{ fontSize: "18px", fontWeight: 600 }}>Getachew_Ekubay_AI_Engineer_Resume.pdf</h3>
-              <p className="text-slate-400 mb-5" style={{ fontSize: "13px" }}>Full-Stack Developer & AI/ML Engineer \u2014 Updated April 2026</p>
+              <p className="text-slate-400 mb-5" style={{ fontSize: "13px" }}>Full-Stack Developer & AI/ML Engineer — Updated April 2026</p>
 
               <div className="flex flex-wrap gap-3">
                 <button
@@ -67,11 +67,12 @@ export function ResumeSection() {
               className="mt-8 bg-white rounded-xl overflow-hidden"
             >
               <div className="p-6 md:p-8" style={{ fontFamily: "'Inter', sans-serif" }}>
+                {/* Mini resume preview */}
                 <div className="bg-slate-800 text-white p-5 rounded-lg mb-5">
                   <h4 style={{ fontSize: "20px", fontWeight: 700 }}>Getachew Ekubay</h4>
                   <p className="text-slate-300" style={{ fontSize: "13px" }}>Full Stack Developer | AI/ML Engineer</p>
                   <p className="text-slate-400 mt-1" style={{ fontSize: "11px" }}>
-                    Mekelle, Ethiopia \u00b7 +251 994 659 621 \u00b7 getachewekubay8@gmail.com
+                    Mekelle, Ethiopia · +251 994 659 621 · getachewekubay8@gmail.com
                   </p>
                 </div>
 
@@ -166,15 +167,15 @@ li{margin-bottom:3px}
 </div></div>
 
 <div class="section"><h2>Experience</h2>
-<div class="exp-item"><div class="exp-header"><h3>AI/ML Intern</h3><span>Jun 2025 \u2013 Present</span></div>
+<div class="exp-item"><div class="exp-header"><h3>AI/ML Intern</h3><span>Jun 2025 – Present</span></div>
 <div class="exp-org">Memi Trading PLC</div>
 <ul><li>Designed and deployed 3 AI-powered applications using FastAPI + Next.js, reducing manual processing time by 65%.</li>
 <li>Integrated RAG-based medical knowledge retrieval into clinical decision support system.</li></ul></div>
-<div class="exp-item"><div class="exp-header"><h3>CTO & Co-Founder</h3><span>Dec 2025 \u2013 Present</span></div>
+<div class="exp-item"><div class="exp-header"><h3>CTO & Co-Founder</h3><span>Dec 2025 – Present</span></div>
 <div class="exp-org">Gemed Solutions</div>
 <ul><li>Led team of 4 to build end-to-end AI incubation platform; secured 2 pilot clients in 3 months.</li>
 <li>Architected full-stack system (React + FastAPI + PostgreSQL + Docker) for 15+ startups.</li></ul></div>
-<div class="exp-item"><div class="exp-header"><h3>Program & Event Coordinator</h3><span>Sep 2025 \u2013 Present</span></div>
+<div class="exp-item"><div class="exp-header"><h3>Program & Event Coordinator</h3><span>Sep 2025 – Present</span></div>
 <div class="exp-org">Born to Win Tech Club</div>
 <ul><li>Organized 12 workshops on Generative AI and Agentic Systems, growing membership from 45 to 180+.</li></ul></div></div>
 
@@ -195,7 +196,7 @@ li{margin-bottom:3px}
 <p style="font-size:12px;color:#64748b">CGPA: 3.93 / 4.0</p>
 <p style="font-size:11.5px;color:#64748b;margin-top:4px"><b style="color:#334155">Achievements:</b> Top performer; startup competition winner.</p></div>
 <div class="section"><h2>Certifications</h2>
-<div class="cert"><h4>Machine Learning Specialization</h4><p>Coursera & Stanford \u2014 March 2025</p></div>
-<div class="cert" style="margin-top:8px"><h4>Full-Stack Developer Certificate</h4><p>Udacity \u2014 January 2025</p></div>
-<div style="margin-top:12px"><p style="font-size:11.5px"><b>Languages:</b> English (Fluent) \u00b7 Amharic (Fluent) \u00b7 Tigrinya (Native)</p></div></div>
+<div class="cert"><h4>Machine Learning Specialization</h4><p>Coursera & Stanford — March 2025</p></div>
+<div class="cert" style="margin-top:8px"><h4>Full-Stack Developer Certificate</h4><p>Udacity — January 2025</p></div>
+<div style="margin-top:12px"><p style="font-size:11.5px"><b>Languages:</b> English (Fluent) · Amharic (Fluent) · Tigrinya (Native)</p></div></div>
 </div></div></body></html>`;

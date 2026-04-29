@@ -4,6 +4,7 @@ import { AboutSection } from "./components/AboutSection";
 import { SkillsSection } from "./components/SkillsSection";
 import { ExperienceSection } from "./components/ExperienceSection";
 import { ProjectsSection } from "./components/ProjectsSection";
+import { BlogSection } from "./components/BlogSection";
 import { ResumeSection } from "./components/ResumeSection";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
@@ -18,6 +19,7 @@ export default function App() {
       <SkillsSection />
       <ExperienceSection />
       <ProjectsSection />
+      <BlogSection />
       <ResumeSection />
       <ContactSection />
       <Footer />

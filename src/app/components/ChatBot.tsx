@@ -17,7 +17,7 @@ const knowledgeBase: KnowledgeChunk[] = [
     id: "bio-1",
     category: "bio",
     keywords: ["who", "about", "introduce", "getachew", "name", "background", "tell me", "yourself", "him", "overview", "summary"],
-    content: "Getachew Ekubay is a builder at heart, specializing in the intersection of AI/ML Engineering, Full-Stack Development, and Robotics. Based in Mekelle, Ethiopia, he is pursuing a B.Sc. in Electrical & Computer Engineering at Mekelle University (CGPA 3.93/4.0). He focuses on designing and deploying intelligent, scalable systems that bridge the gap between complex research and production-ready applications. His approach is end-to-end: he doesn't just train models \u2014 he builds the robust full-stack architectures required to integrate them into real-world industrial environments.",
+    content: "Getachew Ekubay is a builder at heart, specializing in the intersection of AI/ML Engineering, Full-Stack Development, and Robotics. Based in Mekelle, Ethiopia, he is pursuing a B.Sc. in Electrical & Computer Engineering at Mekelle University (CGPA 3.93/4.0). He focuses on designing and deploying intelligent, scalable systems that bridge the gap between complex research and production-ready applications.",
   },
   {
     id: "contact-1",
@@ -35,7 +35,7 @@ const knowledgeBase: KnowledgeChunk[] = [
     id: "skills-ai",
     category: "skills",
     keywords: ["ai", "ml", "machine learning", "deep learning", "artificial intelligence", "nlp", "natural language", "computer vision", "rag", "agentic", "llm", "model", "neural", "transformer", "vit", "contrastive"],
-    content: "Getachew specializes in AI/ML including Machine Learning, Deep Learning, Computer Vision, NLP, RAG (Retrieval-Augmented Generation), Agentic AI, LLM Integration, Vision Transformers (ViT), and Contrastive Learning. He works with PyTorch, TensorFlow, Scikit-learn, LangChain, Hugging Face, and OpenCV. He has built production-grade AI systems for healthcare, e-commerce, industrial automation, and startup incubation.",
+    content: "Getachew specializes in AI/ML including Machine Learning, Deep Learning, Computer Vision, NLP, RAG (Retrieval-Augmented Generation), Agentic AI, LLM Integration, Vision Transformers (ViT), and Contrastive Learning. He works with PyTorch, TensorFlow, Scikit-learn, LangChain, Hugging Face, and OpenCV.",
   },
   {
     id: "exp-memi",
@@ -132,7 +132,7 @@ function generateLocalResponse(query: string): string {
   let response = topChunk.content;
   const allCategories: Record<string, string> = {
     bio: "his background", skills: "his technical skills", experience: "his work experience",
-    projects: "his projects", education: "his education", certifications: "his certifications", contact: "how to contact him",
+    projects: "his projects", education: "his education", contact: "how to contact him",
   };
   const available = Object.entries(allCategories).filter(([key]) => !categories.includes(key)).slice(0, 2).map(([, val]) => val);
   if (available.length) response += `\n\n\ud83d\udca1 *You can also ask about ${available.join(" or ")}.*`;
@@ -202,11 +202,9 @@ export function ChatBot() {
     let responseText: string;
 
     try {
-      // Try backend first
       const data = await portfolioAPI.chat(msg);
       responseText = data.response;
     } catch {
-      // Fallback to client-side RAG
       responseText = generateLocalResponse(msg);
     }
 
@@ -387,7 +385,7 @@ export function ChatBot() {
                 </button>
               </div>
               <p className="text-center text-slate-600 mt-2" style={{ fontSize: "10px" }}>
-                RAG-powered \u00b7 Backend + client-side fallback
+                RAG-powered · Backend + client-side fallback
               </p>
             </div>
           </motion.div>

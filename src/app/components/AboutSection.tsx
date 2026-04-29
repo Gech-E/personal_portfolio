@@ -12,7 +12,7 @@ const whatIBring = [
   {
     icon: Brain,
     title: "AI/ML & Research",
-    desc: "Implementing advanced architectures \u2014 including Vision Transformers (ViT) and Deep Learning models \u2014 to solve industrial automation and computer vision challenges.",
+    desc: "Implementing advanced architectures — including Vision Transformers (ViT) and Deep Learning models — to solve industrial automation and computer vision challenges.",
   },
   {
     icon: Code,
@@ -27,7 +27,7 @@ const whatIBring = [
   {
     icon: Cpu,
     title: "Robotics & Automation",
-    desc: "Intelligent control systems and automation \u2014 bridging the gap between software intelligence and physical-world applications.",
+    desc: "Intelligent control systems and automation — bridging the gap between software intelligence and physical-world applications.",
   },
 ];
 
@@ -42,6 +42,7 @@ export function AboutSection() {
   return (
     <section id="about" className="py-24 bg-slate-950">
       <div className="max-w-6xl mx-auto px-6">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -57,7 +58,9 @@ export function AboutSection() {
           </p>
         </motion.div>
 
+        {/* Main bio content — replaces image */}
         <div className="grid lg:grid-cols-5 gap-10 mb-16">
+          {/* Left: narrative block */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -66,6 +69,7 @@ export function AboutSection() {
             className="lg:col-span-3"
           >
             <div className="bg-slate-800/30 border border-slate-700/40 rounded-2xl p-8 space-y-5 relative overflow-hidden">
+              {/* Decorative gradient */}
               <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
               <div className="absolute bottom-0 left-0 w-36 h-36 bg-blue-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
@@ -84,7 +88,7 @@ export function AboutSection() {
                 </p>
 
                 <p className="text-slate-400" style={{ fontSize: "14.5px", lineHeight: 1.85 }}>
-                  My approach is end-to-end: I don't just train models \u2014 I build the{" "}
+                  My approach is end-to-end: I don't just train models — I build the{" "}
                   <span className="text-slate-200" style={{ fontWeight: 500 }}>robust full-stack architectures</span> required to integrate them into real-world industrial environments.
                   Whether it's researching vision-based anomaly detection using contrastive learning or engineering digital automation platforms,
                   I thrive on turning complex data into actionable, high-impact systems.
@@ -100,12 +104,13 @@ export function AboutSection() {
                 <p className="text-slate-400" style={{ fontSize: "14.5px", lineHeight: 1.85 }}>
                   I'm driven by continuous learning and the challenge of building systems that are not only functional but also{" "}
                   <span className="text-slate-200" style={{ fontWeight: 500 }}>scalable and intelligent</span>.
-                  If you're building something ambitious in the realm of AI, Robotics, or Software Engineering \u2014 let's connect.
+                  If you're building something ambitious in the realm of AI, Robotics, or Software Engineering — let's connect.
                 </p>
               </div>
             </div>
           </motion.div>
 
+          {/* Right: stats + CTA */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -113,6 +118,7 @@ export function AboutSection() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-2 flex flex-col gap-5"
           >
+            {/* Stats grid */}
             <div className="grid grid-cols-2 gap-3">
               {stats.map((s) => (
                 <div key={s.label} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5 text-center">
@@ -122,6 +128,7 @@ export function AboutSection() {
               ))}
             </div>
 
+            {/* Tech stack tags */}
             <div className="bg-slate-800/30 border border-slate-700/40 rounded-xl p-5 flex-1">
               <div className="flex items-center gap-2 mb-4">
                 <Wrench className="w-4 h-4 text-emerald-400" />
@@ -145,6 +152,7 @@ export function AboutSection() {
           </motion.div>
         </div>
 
+        {/* What I Bring — 4 cards */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

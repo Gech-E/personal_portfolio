@@ -147,7 +147,6 @@ export function ContactSection() {
               />
             </div>
 
-            {/* Status feedback */}
             {status === "sent" && (
               <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2.5" style={{ fontSize: "13px" }}>
                 <CheckCircle className="w-4 h-4 shrink-0" />

@@ -3,7 +3,6 @@ import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { portfolioAPI, type ProjectFromAPI } from "@/lib/api";
 
-// Icon mapping for dynamic icon rendering from backend
 const iconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   Brain,
   ShoppingCart,
@@ -13,7 +12,6 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; style?: 
   AlertTriangle,
 };
 
-// Hardcoded fallback projects (used if API is unreachable)
 const fallbackProjects = [
   {
     title: "Vendor Recommendation System",
@@ -97,7 +95,6 @@ function mapApiProjects(apiProjects: ProjectFromAPI[]): DisplayProject[] {
 export function ProjectsSection() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [projects, setProjects] = useState<DisplayProject[]>(fallbackProjects);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     portfolioAPI
@@ -106,11 +103,9 @@ export function ProjectsSection() {
         if (data.length > 0) {
           setProjects(mapApiProjects(data));
         }
-        setLoaded(true);
       })
       .catch((err) => {
         console.warn("Using fallback projects:", err.message);
-        setLoaded(true);
       });
   }, []);
 
@@ -159,32 +154,20 @@ export function ProjectsSection() {
                   <p.icon className="w-5.5 h-5.5" style={{ color: p.color }} />
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {p.github_url && (
-                    <a
-                      href={p.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer"
-                    >
+                  {p.github_url ? (
+                    <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
                       <Github className="w-4 h-4" />
                     </a>
-                  )}
-                  {!p.github_url && (
+                  ) : (
                     <span className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
                       <Github className="w-4 h-4" />
                     </span>
                   )}
-                  {p.demo_url && (
-                    <a
-                      href={p.demo_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer"
-                    >
+                  {p.demo_url ? (
+                    <a href={p.demo_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
                       <ExternalLink className="w-4 h-4" />
                     </a>
-                  )}
-                  {!p.demo_url && (
+                  ) : (
                     <span className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
                       <ExternalLink className="w-4 h-4" />
                     </span>

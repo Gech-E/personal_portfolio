@@ -8,11 +8,13 @@ export function HeroSection() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f172a 100%)" }}
     >
+      {/* Animated grid bg */}
       <div className="absolute inset-0 opacity-10" style={{
         backgroundImage: "linear-gradient(rgba(52,211,153,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(52,211,153,0.3) 1px, transparent 1px)",
         backgroundSize: "60px 60px"
       }} />
 
+      {/* Gradient orbs */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl" />
 
@@ -55,6 +57,7 @@ export function HeroSection() {
             </a>
           </div>
 
+          {/* Social icons */}
           <div className="flex justify-center gap-4">
             {[
               { icon: Github, href: "https://github.com/Gech-E", label: "GitHub" },
@@ -75,6 +78,7 @@ export function HeroSection() {
           </div>
         </motion.div>
 
+        {/* Scroll indicator */}
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
           animate={{ y: [0, 10, 0] }}
