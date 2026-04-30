@@ -156,7 +156,7 @@ def process_query(
             )
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=formatted_messages,
             config={"system_instruction": system_prompt},
         )
