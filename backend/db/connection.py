@@ -25,6 +25,18 @@ def init_db():
             created_at TIMESTAMP DEFAULT NOW()
         );
     """)
+
+    # Create contact_messages table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS contact_messages (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100),
+            email VARCHAR(100),
+            subject VARCHAR(200),
+            message TEXT,
+            created_at TIMESTAMP DEFAULT NOW()
+        );
+    """)
     conn.commit()
 
     # 2. Try creating vector extension and resume_chunks

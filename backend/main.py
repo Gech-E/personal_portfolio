@@ -12,8 +12,10 @@ from dotenv import load_dotenv
 from db.connection import init_db
 from services.retrieval import initialize as init_retrieval
 from api.routes.chat import router as chat_router
+from api.routes.contact import router as contact_router
+from api.routes.portfolio import router as portfolio_router
 
-# ─── Environment ─────────────────────────────────────────────────────────────
+# ─── Environment ────
 load_dotenv()
 
 # ─── Lifespan (Startup / Shutdown) ───────────────────────────────────────────
@@ -35,7 +37,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-# ─── Application ─────────────────────────────────────────────────────────────
+# ─── Application ────
 app = FastAPI(title="Portfolio RAG API", version="2.0.0", lifespan=lifespan)
 
 app.add_middleware(
@@ -49,10 +51,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ─── Routers ─────────────────────────────────────────────────────────────────
-app.include_router(chat_router)
+# ─── Root ────
+@app.get("/")
+def root():
+    return {
+        "service": "Portfolio RAG API",
+        "version": "2.0.0",
+        "docs": "/docs",
+        "health": "/api/health",
+    }
 
-# ─── Dev Entry Point ─────────────────────────────────────────────────────────
+# ─── Routers 
+app.include_router(chat_router)
+app.include_router(contact_router)
+app.include_router(portfolio_router)
+
+# ─── Dev Entry Point 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
