@@ -82,16 +82,14 @@ export function AboutSection() {
                 </div>
 
                 <p className="text-slate-300" style={{ fontSize: "14.5px", lineHeight: 1.85 }}>
-                  I focus on designing and deploying intelligent, scalable systems that bridge the gap between{" "}
-                  <span className="text-white" style={{ fontWeight: 500 }}>complex research</span> and{" "}
-                  <span className="text-white" style={{ fontWeight: 500 }}>production-ready applications</span>.
+                  As an <span className="text-white" style={{ fontWeight: 500 }}>AI/ML Engineer</span> and <span className="text-white" style={{ fontWeight: 500 }}>AI-Powered Full-Stack Developer</span>, I focus on engineering intelligent, scalable systems that bridge the gap between cutting-edge research and production-grade applications.
                 </p>
 
                 <p className="text-slate-400" style={{ fontSize: "14.5px", lineHeight: 1.85 }}>
-                  My approach is end-to-end: I don't just train models — I build the{" "}
-                  <span className="text-slate-200" style={{ fontWeight: 500 }}>robust full-stack architectures</span> required to integrate them into real-world industrial environments.
-                  Whether it's researching vision-based anomaly detection using contrastive learning or engineering digital automation platforms,
-                  I thrive on turning complex data into actionable, high-impact systems.
+                  My approach is end-to-end: I don't just train state-of-the-art models — I architect the{" "}
+                  <span className="text-slate-200" style={{ fontWeight: 500 }}>robust full-stack ecosystems</span> required to deploy them into real-world industrial environments.
+                  From developing vision-based anomaly detection engines using contrastive learning, to building RAG-driven platforms and agentic automation workflows,
+                  I thrive on turning complex machine learning capabilities into seamless, high-impact software solutions.
                 </p>
 
                 <div className="flex items-center gap-3 pt-2">
