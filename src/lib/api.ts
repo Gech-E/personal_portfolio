@@ -39,13 +39,16 @@ export interface ContactResponse {
   created_at: string;
 }
 
-export interface ChatRequest {
-  query: string;
+export interface ChatRequestPayload {
+  session_id: string;
+  messages: { role: string; content: string }[];
 }
 
 export interface ChatResponse {
-  response: string;
-  chunks_used: number;
+  reply: string;
+  sources: string[];
+  intent?: string;
+  confidence?: number;
 }
 
 // ─── Fetch helpers ───────────────────────────────────────────────────
@@ -76,9 +79,9 @@ export const portfolioAPI = {
       body: JSON.stringify(data),
     }),
 
-  chat: (query: string) =>
+  chat: (data: ChatRequestPayload) =>
     apiFetch<ChatResponse>('/api/chat', {
       method: 'POST',
-      body: JSON.stringify({ query }),
+      body: JSON.stringify(data),
     }),
 };

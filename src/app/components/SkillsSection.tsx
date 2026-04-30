@@ -38,8 +38,8 @@ const fallbackSkillCategories = [
       { name: "TensorFlow", level: 85 },
       { name: "LangChain", level: 86 },
       { name: "Hugging Face", level: 84 },
-      { name: "OpenCV", level: 80 },
-      { name: "Vision Transformers", level: 82 },
+      { name: "MULTI AGENT RAG ", level: 80 },
+      { name: "AI Agents", level: 82 },
     ],
   },
   {
@@ -132,24 +132,15 @@ export function SkillsSection() {
               className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-6"
             >
               <h3 className="text-white mb-5" style={{ fontSize: "16px", fontWeight: 600 }}>{cat.title}</h3>
-              <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
                 {cat.skills.map((s) => (
-                  <div key={s.name}>
-                    <div className="flex justify-between mb-1.5">
-                      <span className="text-slate-300" style={{ fontSize: "13px", fontWeight: 500 }}>{s.name}</span>
-                      <span className="text-slate-500" style={{ fontSize: "12px" }}>{s.level}%</span>
-                    </div>
-                    <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full rounded-full"
-                        style={{ backgroundImage: "linear-gradient(90deg, #34d399, #3b82f6)" }}
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${s.level}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, delay: 0.2 }}
-                      />
-                    </div>
-                  </div>
+                  <span
+                    key={s.name}
+                    className="bg-slate-700/50 text-slate-300 px-3 py-1.5 rounded-md border border-slate-600/50"
+                    style={{ fontSize: "13px", fontWeight: 500 }}
+                  >
+                    {s.name}
+                  </span>
                 ))}
               </div>
             </motion.div>

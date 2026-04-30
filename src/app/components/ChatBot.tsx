@@ -1,258 +1,59 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+/**
+ * ChatBot — floating RAG-powered assistant widget.
+ * All state and logic lives in useChatBot hook; this file is purely UI.
+ */
+
 import { MessageCircle, X, Send, Bot, User, Sparkles, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { portfolioAPI } from "@/lib/api";
+import { useChatBot, SUGGESTED_QUESTIONS } from "@/hooks/useChatBot";
 
-// ─── Client-side RAG fallback (used if backend /api/chat is unreachable) ─────
+// ─── Markdown-light renderer ────────────────────────────────────────────────
 
-interface KnowledgeChunk {
-  id: string;
-  category: string;
-  keywords: string[];
-  content: string;
-}
-
-const knowledgeBase: KnowledgeChunk[] = [
-  {
-    id: "bio-1",
-    category: "bio",
-    keywords: ["who", "about", "introduce", "getachew", "name", "background", "tell me", "yourself", "him", "overview", "summary"],
-    content: "Getachew Ekubay is a builder at heart, specializing in the intersection of AI/ML Engineering, Full-Stack Development, and Robotics. Based in Mekelle, Ethiopia, he is pursuing a B.Sc. in Electrical & Computer Engineering at Mekelle University (CGPA 3.93/4.0). He focuses on designing and deploying intelligent, scalable systems that bridge the gap between complex research and production-ready applications.",
-  },
-  {
-    id: "contact-1",
-    category: "contact",
-    keywords: ["contact", "email", "phone", "reach", "location", "where", "address", "call", "message", "hire", "connect"],
-    content: "You can reach Getachew via email at getachewekubay8@gmail.com or by phone at +251 994 659 621. He is based in Mekelle, Ethiopia. His portfolio website is getachewekubay.vercel.app. You can also find him on GitHub (github.com/Gech-E) and LinkedIn (linkedin.com/in/getachewekubay).",
-  },
-  {
-    id: "skills-languages",
-    category: "skills",
-    keywords: ["skills", "languages", "programming", "code", "python", "javascript", "typescript", "html", "css", "c++", "sql", "tech", "stack", "technologies", "tools"],
-    content: "Getachew is proficient in Python, JavaScript, C++, SQL, and TypeScript. For frontend development, he uses React, Next.js, and Tailwind CSS. On the backend, he works with FastAPI, Flask, MLOps, and System Architecture. His database expertise includes PostgreSQL, MySQL, and MongoDB. He also uses Docker and Git for DevOps.",
-  },
-  {
-    id: "skills-ai",
-    category: "skills",
-    keywords: ["ai", "ml", "machine learning", "deep learning", "artificial intelligence", "nlp", "natural language", "computer vision", "rag", "agentic", "llm", "model", "neural", "transformer", "vit", "contrastive"],
-    content: "Getachew specializes in AI/ML including Machine Learning, Deep Learning, Computer Vision, NLP, RAG (Retrieval-Augmented Generation), Agentic AI, LLM Integration, Vision Transformers (ViT), and Contrastive Learning. He works with PyTorch, TensorFlow, Scikit-learn, LangChain, Hugging Face, and OpenCV.",
-  },
-  {
-    id: "exp-memi",
-    category: "experience",
-    keywords: ["experience", "work", "job", "intern", "memi", "trading", "internship", "current", "working"],
-    content: "Getachew currently works as an AI/ML Intern at Memi Trading PLC (Jun 2025 \u2013 Present). He designed and deployed 3 AI-powered applications using FastAPI + Next.js, reducing manual processing time by 65%.",
-  },
-  {
-    id: "exp-gemed",
-    category: "experience",
-    keywords: ["experience", "cto", "co-founder", "gemed", "solutions", "startup", "leadership", "lead", "founder", "company"],
-    content: "Getachew is the CTO & Co-Founder of Gemed Solutions (Dec 2025 \u2013 Present). He leads a team of 4 developers and researchers building an end-to-end AI incubation platform, securing the first 2 pilot clients within 3 months.",
-  },
-  {
-    id: "projects-overview",
-    category: "projects",
-    keywords: ["projects", "portfolio", "built", "build", "work", "all projects", "what have you built", "show"],
-    content: "Getachew has built 6+ notable projects: (1) Vendor Recommendation System \u2014 ML-driven vendor matching, (2) AI-Powered E-commerce Platform \u2014 collaborative filtering recommendations, (3) Clinical Decision Support System \u2014 NLP + RAG for medical knowledge, (4) Skin Cancer Classification \u2014 CNN with 94% accuracy, (5) Vision-Based Anomaly Detection \u2014 contrastive learning for video monitoring, and (6) AI-Powered Job Matching Platform \u2014 LLM + RAG + Agentic AI for recruitment.",
-  },
-  {
-    id: "edu-1",
-    category: "education",
-    keywords: ["education", "university", "degree", "school", "study", "academic", "cgpa", "gpa", "grade", "course", "mekelle", "graduate", "graduation"],
-    content: "Getachew is pursuing a B.Sc. in Electrical & Computer Engineering at Mekelle University, with an expected graduation in July 2026. He has a CGPA of 3.93/4.0, making him a top performer. He won a startup competition at Mekelle Incubation Center.",
-  },
-  {
-    id: "availability",
-    category: "availability",
-    keywords: ["available", "hire", "open", "looking", "opportunity", "freelance", "remote", "full-time", "part-time", "collaborate", "position", "role"],
-    content: "Getachew is currently open to new opportunities in AI/ML Engineering and Full-Stack Development roles. He is available for full-time positions, internships, and collaborative projects. You can reach out via email at getachewekubay8@gmail.com.",
-  },
-];
-
-function tokenize(text: string): string[] {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s+#.]/g, " ")
-    .split(/\s+/)
-    .filter((t) => t.length > 1);
-}
-
-function retrieveChunks(query: string, topK = 3): KnowledgeChunk[] {
-  const queryTokens = tokenize(query);
-  const scored = knowledgeBase.map((chunk) => {
-    let score = 0;
-    for (const kw of chunk.keywords) {
-      const kwTokens = tokenize(kw);
-      for (const qt of queryTokens) {
-        for (const kt of kwTokens) {
-          if (kt === qt) score += 10;
-          else if (kt.includes(qt) || qt.includes(kt)) score += 5;
-        }
-      }
+function renderContent(content: string) {
+  const parts = content.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="text-emerald-400" style={{ fontWeight: 600 }}>
+          {part.slice(2, -2)}
+        </strong>
+      );
     }
-    const contentTokens = tokenize(chunk.content);
-    for (const qt of queryTokens) {
-      for (const ct of contentTokens) {
-        if (ct === qt) score += 2;
-        else if (ct.includes(qt) && qt.length > 3) score += 1;
-      }
+    if (part.startsWith("*") && part.endsWith("*")) {
+      return (
+        <em key={i} className="text-slate-400">
+          {part.slice(1, -1)}
+        </em>
+      );
     }
-    for (const qt of queryTokens) {
-      if (chunk.category.includes(qt)) score += 8;
-    }
-    return { chunk, score };
+    return part.split("\n").map((line, j) => (
+      <span key={`${i}-${j}`}>
+        {j > 0 && <br />}
+        {line}
+      </span>
+    ));
   });
-  return scored
-    .filter((s) => s.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, topK)
-    .map((s) => s.chunk);
 }
 
-function generateLocalResponse(query: string): string {
-  const q = query.toLowerCase().trim();
-  if (/^(hi|hello|hey|howdy|sup|greetings|good (morning|afternoon|evening))/.test(q)) {
-    return "Hey there! \ud83d\udc4b I'm Getachew's AI assistant, powered by his resume data. I can answer questions about his skills, projects, experience, education, and more. What would you like to know?";
-  }
-  if (/^(thanks|thank you|thx|ty|appreciate)/.test(q)) {
-    return "You're welcome! Feel free to ask anything else about Getachew's background, or scroll down to the Contact section to reach out directly. \ud83d\ude0a";
-  }
-  const chunks = retrieveChunks(query);
-  if (chunks.length === 0) {
-    return "I'm specifically trained on Getachew's resume and professional background. I can help with questions about his **skills**, **projects**, **experience**, **education**, **certifications**, or **contact info**. Could you rephrase your question?";
-  }
-  const categories = [...new Set(chunks.map((c) => c.category))];
-  if (categories.includes("projects") && chunks.length > 1) {
-    return chunks.filter((c) => c.category === "projects").map((c) => c.content).join("\n\n");
-  }
-  if (categories.includes("skills") && chunks.length >= 2) {
-    return chunks.map((c) => c.content).join("\n\n");
-  }
-  const topChunk = chunks[0];
-  let response = topChunk.content;
-  const allCategories: Record<string, string> = {
-    bio: "his background", skills: "his technical skills", experience: "his work experience",
-    projects: "his projects", education: "his education", contact: "how to contact him",
-  };
-  const available = Object.entries(allCategories).filter(([key]) => !categories.includes(key)).slice(0, 2).map(([, val]) => val);
-  if (available.length) response += `\n\n\ud83d\udca1 *You can also ask about ${available.join(" or ")}.*`;
-  return response;
-}
-
-// ─── Component ──────────────────────────────────────────────────────
-
-const suggestedQuestions = [
-  "Who is Getachew?",
-  "What are his AI/ML skills?",
-  "Tell me about his projects",
-  "What's his work experience?",
-  "How can I contact him?",
-  "What's his education?",
-];
-
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
+// ─── Component ──────────────────────────────────────────────────────────────
 
 export function ChatBot() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      content: "Hi! \ud83d\udc4b I'm an AI assistant powered by Getachew's resume. Ask me anything about his **skills**, **projects**, **experience**, or **background**. I use RAG (Retrieval-Augmented Generation) to find the most relevant information from his profile.",
-      timestamp: new Date(),
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping, scrollToBottom]);
-
-  useEffect(() => {
-    if (isOpen) inputRef.current?.focus();
-  }, [isOpen]);
-
-  const handleSend = async (text?: string) => {
-    const msg = (text || input).trim();
-    if (!msg) return;
-
-    const userMsg: ChatMessage = {
-      id: Date.now().toString(),
-      role: "user",
-      content: msg,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
-    setIsTyping(true);
-
-    let responseText: string;
-
-    try {
-      const data = await portfolioAPI.chat(msg);
-      responseText = data.response;
-    } catch {
-      responseText = generateLocalResponse(msg);
-    }
-
-    const assistantMsg: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      role: "assistant",
-      content: responseText,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, assistantMsg]);
-    setIsTyping(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const renderContent = (content: string) => {
-    const parts = content.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
-          <strong key={i} className="text-emerald-400" style={{ fontWeight: 600 }}>
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-      if (part.startsWith("*") && part.endsWith("*")) {
-        return (
-          <em key={i} className="text-slate-400">
-            {part.slice(1, -1)}
-          </em>
-        );
-      }
-      return part.split("\n").map((line, j) => (
-        <span key={`${i}-${j}`}>
-          {j > 0 && <br />}
-          {line}
-        </span>
-      ));
-    });
-  };
+  const {
+    isOpen,
+    setIsOpen,
+    messages,
+    input,
+    setInput,
+    isTyping,
+    messagesEndRef,
+    inputRef,
+    handleSend,
+    handleKeyDown,
+  } = useChatBot();
 
   return (
     <>
+      {/* ── Floating trigger button ── */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
@@ -268,6 +69,7 @@ export function ChatBot() {
         )}
       </AnimatePresence>
 
+      {/* ── Chat window ── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -277,6 +79,7 @@ export function ChatBot() {
             transition={{ duration: 0.25 }}
             className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-3rem)] bg-slate-900 border border-slate-700/60 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
+            {/* Header */}
             <div className="bg-slate-800/80 backdrop-blur-sm px-5 py-4 flex items-center justify-between border-b border-slate-700/50 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
@@ -298,7 +101,11 @@ export function ChatBot() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4" style={{ scrollbarWidth: "thin", scrollbarColor: "#334155 transparent" }}>
+            {/* Messages */}
+            <div
+              className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#334155 transparent" }}
+            >
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex gap-2.5 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                   {msg.role === "assistant" && (
@@ -324,6 +131,7 @@ export function ChatBot() {
                 </div>
               ))}
 
+              {/* Typing indicator */}
               {isTyping && (
                 <div className="flex gap-2.5">
                   <div className="w-7 h-7 rounded-full bg-emerald-500/15 flex items-center justify-center shrink-0">
@@ -342,6 +150,7 @@ export function ChatBot() {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Suggested questions (shown early in conversation) */}
             {messages.length <= 2 && (
               <div className="px-4 pb-2 shrink-0">
                 <div className="flex items-center gap-1.5 mb-2">
@@ -349,7 +158,7 @@ export function ChatBot() {
                   <span className="text-slate-500" style={{ fontSize: "11px", fontWeight: 500 }}>Suggested questions</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {suggestedQuestions.map((q) => (
+                  {SUGGESTED_QUESTIONS.map((q) => (
                     <button
                       key={q}
                       onClick={() => handleSend(q)}
@@ -363,6 +172,7 @@ export function ChatBot() {
               </div>
             )}
 
+            {/* Input bar */}
             <div className="px-4 py-3 border-t border-slate-700/50 shrink-0">
               <div className="flex items-center gap-2 bg-slate-800/60 border border-slate-700/40 rounded-xl px-4 py-2 focus-within:border-emerald-500/50 transition-colors">
                 <input
