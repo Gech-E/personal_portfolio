@@ -113,10 +113,10 @@ def process_query(
             confidence=confidence,
         )
 
-    # ── Step 2: Hybrid Retrieval ─────────────────────────────────────────
+    # ── Step 2: Hybrid Retrieval 
     retrieved_chunks = retrieve(query, intent=intent, top_k=5)
 
-    # ── Step 3: Answerability Check ──────────────────────────────────────
+    # ── Step 3: Answerability Check 
     if not _check_answerability(retrieved_chunks, intent):
         return RAGResult(
             reply=NO_CONTEXT_RESPONSE,
@@ -125,7 +125,7 @@ def process_query(
             confidence=confidence,
         )
 
-    # ── Step 4: Grounded Generation ──────────────────────────────────────
+    # ── Step 4: Grounded Generation 
     context = _build_context(retrieved_chunks)
     sources = list(set(c["category"] for c, _ in retrieved_chunks))
     system_prompt = SYSTEM_PROMPT.format(context=context)
