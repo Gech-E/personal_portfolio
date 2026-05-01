@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Download } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 const navLinks = [
   { label: "Home", href: "#home" },
@@ -85,30 +86,40 @@ export function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-slate-900/98 backdrop-blur-md border-t border-slate-700/50 px-6 py-4 space-y-1">
-          {navLinks.map((l) => (
-            <button
-              key={l.href}
-              onClick={() => scrollTo(l.href)}
-              className={`block w-full text-left px-3 py-2 rounded-md cursor-pointer ${
-                active === l.href.slice(1) ? "text-emerald-400 bg-slate-800" : "text-slate-300"
-              }`}
-              style={{ fontSize: "14px" }}
-            >
-              {l.label}
-            </button>
-          ))}
-          <button
-            onClick={() => scrollTo("#resume")}
-            className="mt-2 w-full flex items-center justify-center gap-2 bg-emerald-500 text-white py-2.5 rounded-lg cursor-pointer"
-            style={{ fontSize: "14px", fontWeight: 600 }}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden bg-slate-900/98 backdrop-blur-md border-t border-slate-700/50 overflow-hidden"
           >
-            <Download className="w-4 h-4" />
-            Resume
-          </button>
-        </div>
-      )}
+            <div className="px-6 py-4 space-y-1">
+              {navLinks.map((l) => (
+                <button
+                  key={l.href}
+                  onClick={() => scrollTo(l.href)}
+                  className={`block w-full text-left px-3 py-2 rounded-md cursor-pointer transition-colors ${
+                    active === l.href.slice(1) ? "text-emerald-400 bg-slate-800" : "text-slate-300 hover:bg-slate-800/50"
+                  }`}
+                  style={{ fontSize: "14px" }}
+                >
+                  {l.label}
+                </button>
+              ))}
+              <button
+                onClick={() => scrollTo("#resume")}
+                className="mt-2 w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white py-2.5 rounded-lg cursor-pointer"
+                style={{ fontSize: "14px", fontWeight: 600 }}
+              >
+                <Download className="w-4 h-4" />
+                Resume
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
