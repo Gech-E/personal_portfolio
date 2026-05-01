@@ -41,7 +41,13 @@ export function Navbar() {
 
   const scrollTo = (href: string) => {
     setMobileOpen(false);
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      const el = document.querySelector(href);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }, 50);
   };
 
   return (
@@ -97,16 +103,20 @@ export function Navbar() {
           >
             <div className="px-6 py-4 space-y-1">
               {navLinks.map((l) => (
-                <button
+                <a
                   key={l.href}
-                  onClick={() => scrollTo(l.href)}
+                  href={l.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollTo(l.href);
+                  }}
                   className={`block w-full text-left px-3 py-2 rounded-md cursor-pointer transition-colors ${
                     active === l.href.slice(1) ? "text-emerald-400 bg-slate-800" : "text-slate-300 hover:bg-slate-800/50"
                   }`}
                   style={{ fontSize: "14px" }}
                 >
                   {l.label}
-                </button>
+                </a>
               ))}
               <button
                 onClick={() => scrollTo("#resume")}
