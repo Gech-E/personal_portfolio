@@ -46,27 +46,32 @@ def initialize():
     ]
     _bm25 = BM25Okapi(corpus)
 
-    # Build dense embeddings
-    api_key = os.getenv("GEMINI_API_KEY")
-    if api_key:
-        try:
-            client = genai.Client(api_key=api_key)
-            texts = [c["content"] for c in RESUME_CHUNKS]
-            embeddings = []
-            # Batch embed (Gemini supports batch)
-            for text in texts:
-                result = client.models.embed_content(
-                    model="gemini-embedding-2",
-                    contents=text,
-                )
-                embeddings.append(result.embeddings[0].values)
-            _embeddings = np.array(embeddings, dtype=np.float32)
-            print(f"[RAG] Embedded {len(texts)} chunks ({_embeddings.shape[1]}d)")
-        except Exception as e:
-            print(f"[RAG] Embedding initialization failed: {e}")
-            _embeddings = None
-    else:
-        print("[RAG] No GEMINI_API_KEY — dense retrieval disabled")
+    # Load dense embeddings from pre-computed cache
+    try:
+        emb_path = os.path.join(os.path.dirname(__file__), 'embeddings.npy')
+        if os.path.exists(emb_path):
+            _embeddings = np.load(emb_path)
+            print(f"[RAG] Loaded pre-computed embeddings from {emb_path} ({_embeddings.shape[1]}d)")
+        else:
+            print("[RAG] No embeddings.npy found! Run cache_embeddings.py first.")
+            # Fallback to computing on the fly if needed (not recommended in Vercel)
+            api_key = os.getenv("GEMINI_API_KEY")
+            if api_key:
+                client = genai.Client(api_key=api_key)
+                texts = [c["content"] for c in RESUME_CHUNKS]
+                embeddings = []
+                for text in texts:
+                    result = client.models.embed_content(
+                        model="gemini-embedding-2",
+                        contents=text,
+                    )
+                    embeddings.append(result.embeddings[0].values)
+                _embeddings = np.array(embeddings, dtype=np.float32)
+                print(f"[RAG] Embedded {len(texts)} chunks dynamically")
+            else:
+                _embeddings = None
+    except Exception as e:
+        print(f"[RAG] Embedding initialization failed: {e}")
         _embeddings = None
 
     _initialized = True
