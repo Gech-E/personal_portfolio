@@ -4,11 +4,12 @@ Wires together: Intent Classification → Hybrid Retrieval → Answerability Che
 """
 
 import os
-import re
+import time
+import logging
 from typing import List, Optional
 from dataclasses import dataclass
 
-from openai import OpenAI
+from openai import OpenAI, APITimeoutError, RateLimitError, APIConnectionError, APIStatusError
 
 from services.intent_classifier import classify_intent
 from services.retrieval import retrieve
@@ -21,6 +22,38 @@ from services.prompts import (
     NO_CONTEXT_RESPONSE,
 )
 
+logger = logging.getLogger("portfolio.rag")
+
+# ─── Configuration ───────────────────────────────────────────────────────────
+GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_TIMEOUT = 15          # seconds per API call
+GROQ_MAX_RETRIES = 1       # retry once on transient errors
+MAX_CONTEXT_CHARS = 6000   # truncate context to prevent token overflow
+
+# Transient error types that warrant a retry
+_RETRYABLE_ERRORS = (APITimeoutError, RateLimitError, APIConnectionError)
+
+# ─── Groq Client (lazy singleton) ────────────────────────────────────────────
+_client: Optional[OpenAI] = None
+
+
+def _get_client() -> Optional[OpenAI]:
+    """Lazy-initialize the Groq OpenAI client."""
+    global _client
+    if _client is None:
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            logger.warning("GROQ_API_KEY not set — LLM generation disabled")
+            return None
+        _client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1",
+            timeout=GROQ_TIMEOUT,
+        )
+    return _client
+
+
+# ─── Data Structures ────────────────────────────────────────────────────────
 
 @dataclass
 class RAGResult:
@@ -31,6 +64,15 @@ class RAGResult:
     confidence: float
 
 
+# ─── Helpers ─────────────────────────────────────────────────────────────────
+
+FALLBACK_UNAVAILABLE = (
+    "I'm having trouble connecting to my AI engine right now. "
+    "Please try again in a moment, or feel free to reach out directly "
+    "at **getachewekubay8@gmail.com**."
+)
+
+
 def _build_context(chunks: list) -> str:
     """Format retrieved chunks into a context string for the LLM."""
     parts = []
@@ -38,7 +80,14 @@ def _build_context(chunks: list) -> str:
         section = chunk["category"].upper()
         sub = chunk.get("subcategory", "").replace("_", " ").title()
         parts.append(f"[{section} — {sub}]\n{chunk['content']}")
-    return "\n\n".join(parts)
+    context = "\n\n".join(parts)
+
+    # Truncate to prevent token overflow
+    if len(context) > MAX_CONTEXT_CHARS:
+        context = context[:MAX_CONTEXT_CHARS] + "\n\n[...context truncated]"
+        logger.info("Context truncated to %d chars", MAX_CONTEXT_CHARS)
+
+    return context
 
 
 def _check_answerability(chunks: list, intent: str) -> bool:
@@ -62,6 +111,52 @@ def _check_answerability(chunks: list, intent: str) -> bool:
     return intent_match or top_score > min_threshold
 
 
+def _call_groq(messages: list[dict]) -> Optional[str]:
+    """
+    Call Groq API with timeout and retry logic.
+    Returns the response text, or None if all attempts fail.
+    """
+    client = _get_client()
+    if client is None:
+        return None
+
+    last_error = None
+    for attempt in range(1 + GROQ_MAX_RETRIES):
+        try:
+            start = time.time()
+            response = client.chat.completions.create(
+                model=GROQ_MODEL,
+                messages=messages,
+            )
+            elapsed = time.time() - start
+            logger.info("Groq response in %.1fs (attempt %d)", elapsed, attempt + 1)
+            return response.choices[0].message.content
+
+        except _RETRYABLE_ERRORS as e:
+            last_error = e
+            logger.warning(
+                "Groq transient error (attempt %d/%d): %s",
+                attempt + 1, 1 + GROQ_MAX_RETRIES, e,
+            )
+            if attempt < GROQ_MAX_RETRIES:
+                # Brief pause before retry (0.5s)
+                time.sleep(0.5)
+
+        except APIStatusError as e:
+            # Non-retryable API error (4xx client errors, etc.)
+            logger.error("Groq API error (non-retryable): %s", e)
+            return None
+
+        except Exception as e:
+            logger.error("Unexpected Groq error: %s", e, exc_info=True)
+            return None
+
+    logger.error("Groq failed after %d attempts: %s", 1 + GROQ_MAX_RETRIES, last_error)
+    return None
+
+
+# ─── Pipeline ────────────────────────────────────────────────────────────────
+
 def process_query(
     query: str,
     message_history: Optional[List[dict]] = None,
@@ -79,6 +174,7 @@ def process_query(
 
     # ── Step 1: Intent Classification ────────────────────────────────────
     intent, confidence = classify_intent(query)
+    logger.info("Intent: %s (confidence: %.2f) for query: '%.80s'", intent, confidence, query)
 
     # Handle special intents that don't need retrieval
     if intent == "greeting":
@@ -130,41 +226,21 @@ def process_query(
     sources = list(set(c["category"] for c, _ in retrieved_chunks))
     system_prompt = SYSTEM_PROMPT.format(context=context)
 
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        return RAGResult(
-            reply=NO_CONTEXT_RESPONSE,
-            sources=sources,
-            intent=intent,
-            confidence=confidence,
-        )
+    # Build messages in OpenAI format
+    messages = [{"role": "system", "content": system_prompt}]
+    if message_history:
+        for m in message_history:
+            role = "user" if m["role"] == "user" else "assistant"
+            messages.append({"role": role, "content": m["content"]})
+    else:
+        messages.append({"role": "user", "content": query})
 
-    try:
-        client = OpenAI(
-            api_key=api_key,
-            base_url="https://api.groq.com/openai/v1",
-        )
+    # Call Groq with retry
+    reply = _call_groq(messages)
 
-        # Format message history for Groq (OpenAI-compatible format)
-        messages = [{"role": "system", "content": system_prompt}]
-
-        if message_history:
-            for m in message_history:
-                role = "user" if m["role"] == "user" else "assistant"
-                messages.append({"role": role, "content": m["content"]})
-        else:
-            messages.append({"role": "user", "content": query})
-
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-        )
-        reply = response.choices[0].message.content
-
-    except Exception as e:
-        print(f"[RAG] Generation error: {e}")
-        # Fallback: return the raw context instead of erroring
-        reply = context if context else NO_CONTEXT_RESPONSE
+    if reply is None:
+        # Graceful degradation: return friendly message, not raw context
+        reply = FALLBACK_UNAVAILABLE
 
     return RAGResult(
         reply=reply,
