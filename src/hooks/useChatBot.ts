@@ -4,7 +4,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { portfolioAPI } from "@/lib/api";
+import { portfolioAPI, APIError } from "@/lib/api";
 import { generateLocalResponse } from "@/lib/chatbot/fallback";
 import { playNotificationSound } from "@/lib/utils/audio";
 
@@ -15,9 +15,12 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  isError?: boolean;  // Flag for error messages (styled differently in UI)
 }
 
 // ─── Constants ──────────────────────────────────────────────────────────────
+
+const MAX_CONVERSATION_LENGTH = 50;  // Prevent memory bloat
 
 const WELCOME_MESSAGE: ChatMessage = {
   id: "welcome",
@@ -46,6 +49,7 @@ export function useChatBot() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const sendingRef = useRef(false);  // Deduplication guard
 
   // Auto-scroll on new messages
   const scrollToBottom = useCallback(() => {
@@ -68,6 +72,10 @@ export function useChatBot() {
     // Reject empty or punctuation-only messages
     if (!msg || !/[a-zA-Z0-9]/.test(msg)) return;
 
+    // Deduplication: prevent double-sends from rapid clicks
+    if (sendingRef.current) return;
+    sendingRef.current = true;
+
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       role: "user",
@@ -75,12 +83,21 @@ export function useChatBot() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => {
+      const updated = [...prev, userMsg];
+      // Cap conversation length to prevent memory bloat
+      if (updated.length > MAX_CONVERSATION_LENGTH) {
+        // Keep welcome message + most recent messages
+        return [updated[0], ...updated.slice(-(MAX_CONVERSATION_LENGTH - 1))];
+      }
+      return updated;
+    });
     setInput("");
     setIsTyping(true);
     playNotificationSound("send");
 
     let responseText: string;
+    let isError = false;
 
     // Manage session persistence
     const sessionId =
@@ -91,7 +108,7 @@ export function useChatBot() {
 
     try {
       const apiMessages = [...messages, userMsg]
-        .filter((m) => m.id !== "welcome")
+        .filter((m) => m.id !== "welcome" && !m.isError)
         .map((m) => ({ role: m.role, content: m.content }));
 
       const data = await portfolioAPI.chat({
@@ -100,8 +117,24 @@ export function useChatBot() {
       });
       responseText = data.reply;
     } catch (err) {
-      console.error("Backend error, using local fallback:", err);
-      responseText = generateLocalResponse(msg);
+      console.error("Chat API error:", err);
+
+      // Provide specific error feedback based on error type
+      if (err instanceof APIError) {
+        if (err.status === 429) {
+          responseText = "⏳ You're sending messages too quickly. Please wait a moment and try again.";
+          isError = true;
+        } else if (err.status === 0) {
+          // Timeout or network error — use local fallback
+          responseText = generateLocalResponse(msg);
+        } else {
+          responseText = generateLocalResponse(msg);
+        }
+      } else {
+        responseText = generateLocalResponse(msg);
+      }
+    } finally {
+      sendingRef.current = false;
     }
 
     const assistantMsg: ChatMessage = {
@@ -109,6 +142,7 @@ export function useChatBot() {
       role: "assistant",
       content: responseText,
       timestamp: new Date(),
+      isError,
     };
     setMessages((prev) => [...prev, assistantMsg]);
     setIsTyping(false);

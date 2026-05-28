@@ -5,13 +5,16 @@ Embeddings are computed once at startup and cached in memory.
 """
 
 import os
-import math
+import logging
+import threading
 from typing import List, Optional
 
 import numpy as np
 from rank_bm25 import BM25Okapi
 
 from services.knowledge_base import RESUME_CHUNKS, ResumeChunk
+
+logger = logging.getLogger("portfolio.retrieval")
 
 
 # ─── Module-level state (initialized at startup) 
@@ -20,17 +23,21 @@ _embeddings: Optional[np.ndarray] = None  # (num_chunks, embedding_dim)
 _bm25: Optional[BM25Okapi] = None
 _initialized = False
 _embed_model = None  # Lazy-loaded sentence-transformers model
+_model_lock = threading.Lock()  # Thread safety for model loading
 
 
 # ─── Embedding Helpers 
 
 def _get_embed_model():
-    """Lazy-load the sentence-transformers model."""
+    """Lazy-load the sentence-transformers model (thread-safe)."""
     global _embed_model
     if _embed_model is None:
-        from sentence_transformers import SentenceTransformer
-        _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
-        print("[RAG] Loaded sentence-transformers model: all-MiniLM-L6-v2")
+        with _model_lock:
+            # Double-check after acquiring lock
+            if _embed_model is None:
+                from sentence_transformers import SentenceTransformer
+                _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+                logger.info("Loaded sentence-transformers model: all-MiniLM-L6-v2")
     return _embed_model
 
 
@@ -75,23 +82,26 @@ def initialize():
         emb_path = os.path.join(os.path.dirname(__file__), 'embeddings.npy')
         if os.path.exists(emb_path):
             _embeddings = np.load(emb_path)
-            print(f"[RAG] Loaded pre-computed embeddings from {emb_path} ({_embeddings.shape[1]}d)")
+            logger.info(
+                "Loaded pre-computed embeddings from %s (%dd)",
+                emb_path, _embeddings.shape[1],
+            )
         else:
-            print("[RAG] No embeddings.npy found! Run cache_embeddings.py first.")
+            logger.warning("No embeddings.npy found — run cache_embeddings.py first")
             # Fallback to computing on the fly using sentence-transformers
             try:
                 texts = [c["content"] for c in RESUME_CHUNKS]
                 _embeddings = _embed_texts(texts)
-                print(f"[RAG] Embedded {len(texts)} chunks dynamically")
+                logger.info("Embedded %d chunks dynamically", len(texts))
             except Exception as e:
-                print(f"[RAG] Dynamic embedding failed: {e}")
+                logger.error("Dynamic embedding failed: %s", e)
                 _embeddings = None
     except Exception as e:
-        print(f"[RAG] Embedding initialization failed: {e}")
+        logger.error("Embedding initialization failed: %s", e)
         _embeddings = None
 
     _initialized = True
-    print(f"[RAG] Retrieval engine initialized ({len(RESUME_CHUNKS)} chunks)")
+    logger.info("Retrieval engine initialized (%d chunks)", len(RESUME_CHUNKS))
 
 
 # ─── Dense Retrieval 
@@ -116,7 +126,7 @@ def _dense_retrieve(query: str, top_k: int = 10) -> List[tuple[int, float]]:
     try:
         query_emb = _embed_query(query)
     except Exception as e:
-        print(f"[RAG] Query embedding failed: {e}")
+        logger.error("Query embedding failed: %s", e)
         return []
 
     # Compute similarities
