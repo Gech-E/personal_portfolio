@@ -1,5 +1,5 @@
 """
-Hybrid retrieval engine — Dense (Gemini embeddings) + Sparse (BM25).
+Hybrid retrieval engine — Dense (sentence-transformers embeddings) + Sparse (BM25).
 Uses Reciprocal Rank Fusion (RRF) to combine results.
 Embeddings are computed once at startup and cached in memory.
 """
@@ -10,7 +10,6 @@ from typing import List, Optional
 
 import numpy as np
 from rank_bm25 import BM25Okapi
-from google import genai
 
 from services.knowledge_base import RESUME_CHUNKS, ResumeChunk
 
@@ -20,6 +19,31 @@ from services.knowledge_base import RESUME_CHUNKS, ResumeChunk
 _embeddings: Optional[np.ndarray] = None  # (num_chunks, embedding_dim)
 _bm25: Optional[BM25Okapi] = None
 _initialized = False
+_embed_model = None  # Lazy-loaded sentence-transformers model
+
+
+# ─── Embedding Helpers 
+
+def _get_embed_model():
+    """Lazy-load the sentence-transformers model."""
+    global _embed_model
+    if _embed_model is None:
+        from sentence_transformers import SentenceTransformer
+        _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+        print("[RAG] Loaded sentence-transformers model: all-MiniLM-L6-v2")
+    return _embed_model
+
+
+def _embed_texts(texts: List[str]) -> np.ndarray:
+    """Embed a list of texts using sentence-transformers."""
+    model = _get_embed_model()
+    return model.encode(texts, convert_to_numpy=True).astype(np.float32)
+
+
+def _embed_query(query: str) -> np.ndarray:
+    """Embed a single query string."""
+    model = _get_embed_model()
+    return model.encode(query, convert_to_numpy=True).astype(np.float32)
 
 
 # ─── Initialization 
@@ -54,21 +78,13 @@ def initialize():
             print(f"[RAG] Loaded pre-computed embeddings from {emb_path} ({_embeddings.shape[1]}d)")
         else:
             print("[RAG] No embeddings.npy found! Run cache_embeddings.py first.")
-            # Fallback to computing on the fly if needed (not recommended in Vercel)
-            api_key = os.getenv("GEMINI_API_KEY")
-            if api_key:
-                client = genai.Client(api_key=api_key)
+            # Fallback to computing on the fly using sentence-transformers
+            try:
                 texts = [c["content"] for c in RESUME_CHUNKS]
-                embeddings = []
-                for text in texts:
-                    result = client.models.embed_content(
-                        model="gemini-embedding-2",
-                        contents=text,
-                    )
-                    embeddings.append(result.embeddings[0].values)
-                _embeddings = np.array(embeddings, dtype=np.float32)
+                _embeddings = _embed_texts(texts)
                 print(f"[RAG] Embedded {len(texts)} chunks dynamically")
-            else:
+            except Exception as e:
+                print(f"[RAG] Dynamic embedding failed: {e}")
                 _embeddings = None
     except Exception as e:
         print(f"[RAG] Embedding initialization failed: {e}")
@@ -97,17 +113,8 @@ def _dense_retrieve(query: str, top_k: int = 10) -> List[tuple[int, float]]:
     if _embeddings is None:
         return []
 
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        return []
-
     try:
-        client = genai.Client(api_key=api_key)
-        result = client.models.embed_content(
-            model="gemini-embedding-2",
-            contents=query,
-        )
-        query_emb = np.array(result.embeddings[0].values, dtype=np.float32)
+        query_emb = _embed_query(query)
     except Exception as e:
         print(f"[RAG] Query embedding failed: {e}")
         return []
@@ -230,4 +237,3 @@ def retrieve(
             used_ids.add(chunk["id"])
 
     return results[:top_k]
-

@@ -8,7 +8,7 @@ import re
 from typing import List, Optional
 from dataclasses import dataclass
 
-from google import genai
+from openai import OpenAI
 
 from services.intent_classifier import classify_intent
 from services.retrieval import retrieve
@@ -125,12 +125,12 @@ def process_query(
             confidence=confidence,
         )
 
-    # ── Step 4: Grounded Generation 
+    # ── Step 4: Grounded Generation (Groq via OpenAI-compatible API)
     context = _build_context(retrieved_chunks)
     sources = list(set(c["category"] for c, _ in retrieved_chunks))
     system_prompt = SYSTEM_PROMPT.format(context=context)
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         return RAGResult(
             reply=NO_CONTEXT_RESPONSE,
@@ -140,27 +140,26 @@ def process_query(
         )
 
     try:
-        client = genai.Client(api_key=api_key)
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1",
+        )
 
-        # Format message history for Gemini
-        formatted_messages = []
+        # Format message history for Groq (OpenAI-compatible format)
+        messages = [{"role": "system", "content": system_prompt}]
+
         if message_history:
             for m in message_history:
-                role = "user" if m["role"] == "user" else "model"
-                formatted_messages.append(
-                    {"role": role, "parts": [{"text": m["content"]}]}
-                )
+                role = "user" if m["role"] == "user" else "assistant"
+                messages.append({"role": role, "content": m["content"]})
         else:
-            formatted_messages.append(
-                {"role": "user", "parts": [{"text": query}]}
-            )
+            messages.append({"role": "user", "content": query})
 
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=formatted_messages,
-            config={"system_instruction": system_prompt},
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
         )
-        reply = response.text
+        reply = response.choices[0].message.content
 
     except Exception as e:
         print(f"[RAG] Generation error: {e}")
