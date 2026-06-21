@@ -2,6 +2,7 @@ import { ExternalLink, Github, Brain, ShoppingCart, Stethoscope, Eye, Search, Al
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { portfolioAPI, type ProjectFromAPI } from "@/lib/api";
+import { default as fallbackProjectsData, iconMap as dataIconMap } from '../data/projects';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   Brain,
@@ -12,50 +13,15 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; style?: 
   AlertTriangle,
 };
 
-const fallbackProjects = [
-  {
-    title: "Vendor Recommendation System",
-    desc: "ML-driven vendor matching using matrix factorization & ensemble models with a React frontend and FastAPI backend. Automated vendor selection reduced procurement time by 40%.",
-    tags: ["Python", "FastAPI", "React", "Scikit-learn", "PostgreSQL"],
-    icon: Brain,
-    color: "#34d399",
-  },
-  {
-    title: "AI-Powered E-commerce Platform",
-    desc: "Full-stack e-commerce app with collaborative filtering recommendations. Built with Next.js + FastAPI, deployed on Vercel with real-time product suggestions.",
-    tags: ["Next.js", "FastAPI", "TensorFlow", "PostgreSQL", "Vercel"],
-    icon: ShoppingCart,
-    color: "#3b82f6",
-  },
-  {
-    title: "Clinical Decision Support System",
-    desc: "NLP & deep learning model analyzing patient symptoms with RAG-based medical knowledge retrieval for evidence-backed clinical recommendations.",
-    tags: ["Python", "LangChain", "RAG", "PyTorch", "FastAPI"],
-    icon: Stethoscope,
-    color: "#f472b6",
-  },
-  {
-    title: "Skin Cancer Classification",
-    desc: "CNN-based dermoscopy image classifier achieving 94% accuracy. Real-time web deployment with React frontend and FastAPI inference server.",
-    tags: ["PyTorch", "OpenCV", "React", "FastAPI", "Docker"],
-    icon: Eye,
-    color: "#fbbf24",
-  },
-  {
-    title: "Vision-Based Anomaly Detection",
-    desc: "Unsupervised industrial/security video monitoring using contrastive learning. Next.js dashboard for real-time alerts and analytics.",
-    tags: ["PyTorch", "OpenCV", "Next.js", "Contrastive Learning"],
-    icon: AlertTriangle,
-    color: "#f97316",
-  },
-  {
-    title: "AI-Powered Job Matching Platform",
-    desc: "NLP + vector embeddings (LLM + RAG) matching candidates to optimal jobs. Agentic AI features for automated resume screening and ranking.",
-    tags: ["LangChain", "Hugging Face", "Next.js", "Agentic AI", "RAG"],
-    icon: Search,
-    color: "#8b5cf6",
-  },
-];
+const fallbackProjects: DisplayProject[] = fallbackProjectsData.map((p) => ({
+  title: p.title,
+  desc: p.desc,
+  tags: p.tags,
+  icon: (p.icon && dataIconMap[p.icon]) || Brain,
+  color: p.color,
+  github_url: p.githubUrl,
+  demo_url: p.liveUrl,
+}));
 
 const filters = ["All", "AI/ML", "Full-Stack", "Computer Vision"];
 
@@ -151,26 +117,18 @@ export function ProjectsSection() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-11 h-11 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${p.color}15` }}>
-                  <p.icon className="w-5.5 h-5.5" style={{ color: p.color }} />
+                  <p.icon className="w-[22px] h-[22px]" style={{ color: p.color }} />
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {p.github_url ? (
-                    <a href={p.github_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
+                  {p.github_url && (
+                    <a href={p.github_url} target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
                       <Github className="w-4 h-4" />
                     </a>
-                  ) : (
-                    <span className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
-                      <Github className="w-4 h-4" />
-                    </span>
                   )}
-                  {p.demo_url ? (
-                    <a href={p.demo_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
+                  {p.demo_url && (
+                    <a href={p.demo_url} target="_blank" rel="noopener noreferrer" aria-label="View live demo" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
                       <ExternalLink className="w-4 h-4" />
                     </a>
-                  ) : (
-                    <span className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
-                      <ExternalLink className="w-4 h-4" />
-                    </span>
                   )}
                 </div>
               </div>

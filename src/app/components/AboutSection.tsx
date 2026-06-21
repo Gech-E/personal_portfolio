@@ -1,4 +1,13 @@
-import { Code, Brain, Cpu, Users, Wrench, Layers, Zap, Target } from "lucide-react";
+import {
+  Code,
+  Brain,
+  Cpu,
+  Users,
+  Wrench,
+  Layers,
+  Zap,
+  Target,
+} from "lucide-react";
 import { motion } from "motion/react";
 
 const stats = [
@@ -32,9 +41,31 @@ const whatIBring = [
 ];
 
 const techStack = [
-  { label: "Languages", items: ["Python", "JavaScript", "C++", "SQL", "TypeScript"] },
-  { label: "AI/ML", items: ["PyTorch", "TensorFlow", "Computer Vision", "Contrastive Learning", "Vision Transformers"] },
-  { label: "Full-Stack", items: ["React", "Next.js", "FastAPI", "Flask", "MLOps", "System Architecture"] },
+  {
+    label: "Languages",
+    items: ["Python", "JavaScript", "C++", "SQL", "TypeScript"],
+  },
+  {
+    label: "AI/ML",
+    items: [
+      "PyTorch",
+      "TensorFlow",
+      "Computer Vision",
+      "Contrastive Learning",
+      "Vision Transformers",
+    ],
+  },
+  {
+    label: "Full-Stack",
+    items: [
+      "React",
+      "Next.js",
+      "FastAPI",
+      "Flask",
+      "MLOps",
+      "System Architecture",
+    ],
+  },
   { label: "Robotics", items: ["Intelligent Control Systems", "Automation"] },
 ];
 
@@ -49,13 +80,41 @@ export function AboutSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-emerald-400 mb-2" style={{ fontSize: "13px", fontWeight: 600, letterSpacing: "0.1em" }}>ABOUT ME</p>
-          <h2 className="text-white mb-4" style={{ fontSize: "32px", fontWeight: 700 }}>A Builder at Heart</h2>
-          <p className="text-slate-400 max-w-3xl mb-6" style={{ fontSize: "17px", lineHeight: 1.8 }}>
-            Specializing in the intersection of <span className="text-emerald-400" style={{ fontWeight: 600 }}>AI/ML Engineering</span>,{" "}
-            <span className="text-emerald-400" style={{ fontWeight: 600 }}>Full-Stack Development</span>, and{" "}
-            <span className="text-emerald-400" style={{ fontWeight: 600 }}>Robotics</span>.
+          <p
+            className="text-emerald-400 mb-2"
+            style={{
+              fontSize: "13px",
+              fontWeight: 600,
+              letterSpacing: "0.1em",
+            }}
+          >
+            ABOUT ME
           </p>
+          <h2
+            className="text-white mb-6 max-w-3xl"
+            style={{ fontSize: "32px", fontWeight: 700, lineHeight: 1.4 }}
+          >
+            A Builder at{" "}
+            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>
+              the intersection of{" "}
+            </span>
+            <span className="text-emerald-400" style={{ fontSize: "17px", fontWeight: 600 }}>
+              AI/ML Engineering
+            </span>
+            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>
+              ,{" "}
+            </span>
+            <span className="text-emerald-400" style={{ fontSize: "17px", fontWeight: 600 }}>
+              Full-Stack Development
+            </span>
+            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>
+              , and{" "}
+            </span>
+            <span className="text-emerald-400" style={{ fontSize: "17px", fontWeight: 600 }}>
+              Robotics
+            </span>
+            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>.</span>
+          </h2>
         </motion.div>
 
         {/* Main bio content — replaces image */}
@@ -78,31 +137,71 @@ export function AboutSection() {
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                     <Target className="w-5 h-5 text-emerald-400" />
                   </div>
-                  <h3 className="text-white" style={{ fontSize: "18px", fontWeight: 600 }}>My Approach</h3>
+                  <h3
+                    className="text-white"
+                    style={{ fontSize: "18px", fontWeight: 600 }}
+                  >
+                    My Approach
+                  </h3>
                 </div>
 
-                <p className="text-slate-300" style={{ fontSize: "14.5px", lineHeight: 1.85 }}>
-                  As an <span className="text-white" style={{ fontWeight: 500 }}>AI/ML Engineer</span> and <span className="text-white" style={{ fontWeight: 500 }}>AI-Powered Full-Stack Developer</span>, I focus on engineering intelligent, scalable systems that bridge the gap between cutting-edge research and production-grade applications.
+                <p
+                  className="text-slate-300"
+                  style={{ fontSize: "14.5px", lineHeight: 1.85 }}
+                >
+                  As an{" "}
+                  <span className="text-white" style={{ fontWeight: 500 }}>
+                    AI/ML Engineer
+                  </span>{" "}
+                  and{" "}
+                  <span className="text-white" style={{ fontWeight: 500 }}>
+                    AI-Powered Full-Stack Developer
+                  </span>
+                  , I focus on engineering intelligent, scalable systems that
+                  bridge the gap between cutting-edge research and
+                  production-grade applications.
                 </p>
 
-                <p className="text-slate-400" style={{ fontSize: "14.5px", lineHeight: 1.85 }}>
-                  My approach is end-to-end: I don't just train state-of-the-art models — I architect the{" "}
-                  <span className="text-slate-200" style={{ fontWeight: 500 }}>robust full-stack ecosystems</span> required to deploy them into real-world industrial environments.
-                  From developing vision-based anomaly detection engines using contrastive learning, to building RAG-driven platforms and agentic automation workflows,
-                  I thrive on turning complex machine learning capabilities into seamless, high-impact software solutions.
+                <p
+                  className="text-slate-400"
+                  style={{ fontSize: "14.5px", lineHeight: 1.85 }}
+                >
+                  My approach is end-to-end: I don't just train state-of-the-art
+                  models — I architect the{" "}
+                  <span className="text-slate-200" style={{ fontWeight: 500 }}>
+                    robust full-stack ecosystems
+                  </span>{" "}
+                  required to deploy them into real-world industrial
+                  environments. From developing vision-based anomaly detection
+                  engines using contrastive learning, to building RAG-driven
+                  platforms and agentic automation workflows, I thrive on
+                  turning complex machine learning capabilities into seamless,
+                  high-impact software solutions.
                 </p>
 
                 <div className="flex items-center gap-3 pt-2">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                     <Zap className="w-5 h-5 text-emerald-400" />
                   </div>
-                  <h3 className="text-white" style={{ fontSize: "18px", fontWeight: 600 }}>What Drives Me</h3>
+                  <h3
+                    className="text-white"
+                    style={{ fontSize: "18px", fontWeight: 600 }}
+                  >
+                    What Drives Me
+                  </h3>
                 </div>
 
-                <p className="text-slate-400" style={{ fontSize: "14.5px", lineHeight: 1.85 }}>
-                  I'm driven by continuous learning and the challenge of building systems that are not only functional but also{" "}
-                  <span className="text-slate-200" style={{ fontWeight: 500 }}>scalable and intelligent</span>.
-                  If you're building something ambitious in the realm of AI, Robotics, or Software Engineering — let's connect.
+                <p
+                  className="text-slate-400"
+                  style={{ fontSize: "14.5px", lineHeight: 1.85 }}
+                >
+                  I'm driven by continuous learning and the challenge of
+                  building systems that are not only functional but also{" "}
+                  <span className="text-slate-200" style={{ fontWeight: 500 }}>
+                    scalable and intelligent
+                  </span>
+                  . If you're building something ambitious in the realm of AI,
+                  Robotics, or Software Engineering — let's connect.
                 </p>
               </div>
             </div>
@@ -119,9 +218,22 @@ export function AboutSection() {
             {/* Stats grid */}
             <div className="grid grid-cols-2 gap-3">
               {stats.map((s) => (
-                <div key={s.label} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5 text-center">
-                  <p className="text-emerald-400" style={{ fontSize: "26px", fontWeight: 700 }}>{s.value}</p>
-                  <p className="text-slate-400 mt-1" style={{ fontSize: "12px", fontWeight: 500 }}>{s.label}</p>
+                <div
+                  key={s.label}
+                  className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5 text-center"
+                >
+                  <p
+                    className="text-emerald-400"
+                    style={{ fontSize: "26px", fontWeight: 700 }}
+                  >
+                    {s.value}
+                  </p>
+                  <p
+                    className="text-slate-400 mt-1"
+                    style={{ fontSize: "12px", fontWeight: 500 }}
+                  >
+                    {s.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -130,15 +242,34 @@ export function AboutSection() {
             <div className="bg-slate-800/30 border border-slate-700/40 rounded-xl p-5 flex-1">
               <div className="flex items-center gap-2 mb-4">
                 <Wrench className="w-4 h-4 text-emerald-400" />
-                <h4 className="text-white" style={{ fontSize: "14px", fontWeight: 600 }}>Technical Stack</h4>
+                <h4
+                  className="text-white"
+                  style={{ fontSize: "14px", fontWeight: 600 }}
+                >
+                  Technical Stack
+                </h4>
               </div>
               <div className="space-y-4">
                 {techStack.map((cat) => (
                   <div key={cat.label}>
-                    <p className="text-slate-500 mb-1.5" style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" }}>{cat.label}</p>
+                    <p
+                      className="text-slate-500 mb-1.5"
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {cat.label}
+                    </p>
                     <div className="flex flex-wrap gap-1.5">
                       {cat.items.map((item) => (
-                        <span key={item} className="bg-slate-700/50 text-slate-300 px-2.5 py-1 rounded-md" style={{ fontSize: "11.5px", fontWeight: 500 }}>
+                        <span
+                          key={item}
+                          className="bg-slate-700/50 text-slate-300 px-2.5 py-1 rounded-md"
+                          style={{ fontSize: "11.5px", fontWeight: 500 }}
+                        >
                           {item}
                         </span>
                       ))}
@@ -159,7 +290,12 @@ export function AboutSection() {
         >
           <div className="flex items-center gap-2 mb-6">
             <Layers className="w-5 h-5 text-emerald-400" />
-            <h3 className="text-white" style={{ fontSize: "20px", fontWeight: 600 }}>What I Bring to the Table</h3>
+            <h3
+              className="text-white"
+              style={{ fontSize: "20px", fontWeight: 600 }}
+            >
+              What I Bring to the Table
+            </h3>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {whatIBring.map((h, i) => (
@@ -172,10 +308,20 @@ export function AboutSection() {
                 className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-6 hover:border-emerald-500/40 transition-all hover:-translate-y-1 group"
               >
                 <div className="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 transition-colors">
-                  <h.icon className="w-5.5 h-5.5 text-emerald-400" />
+                  <h.icon className="w-[22px] h-[22px] text-emerald-400" />
                 </div>
-                <h4 className="text-white mb-2" style={{ fontSize: "15px", fontWeight: 600 }}>{h.title}</h4>
-                <p className="text-slate-400" style={{ fontSize: "13px", lineHeight: 1.65 }}>{h.desc}</p>
+                <h4
+                  className="text-white mb-2"
+                  style={{ fontSize: "15px", fontWeight: 600 }}
+                >
+                  {h.title}
+                </h4>
+                <p
+                  className="text-slate-400"
+                  style={{ fontSize: "13px", lineHeight: 1.65 }}
+                >
+                  {h.desc}
+                </p>
               </motion.div>
             ))}
           </div>

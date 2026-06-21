@@ -57,7 +57,7 @@ export function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
-        <button onClick={() => scrollTo("#home")} className="text-white cursor-pointer" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "20px", fontWeight: 700 }}>
+        <button onClick={() => scrollTo("#home")} aria-label="Home" className="text-white cursor-pointer" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "20px", fontWeight: 700 }}>
           GE<span className="text-emerald-400">.</span>
         </button>
 
@@ -86,7 +86,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile toggle */}
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden text-white cursor-pointer">
+        <button onClick={() => setMobileOpen(!mobileOpen)} aria-expanded={mobileOpen} aria-label="Toggle navigation menu" className="md:hidden text-white cursor-pointer">
           {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>

@@ -26,11 +26,35 @@ const categories = categoryConfig.map((c) => c.label);
 export function BlogSection() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-  const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_liked_posts');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+  const [savedPosts, setSavedPosts] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_saved_posts');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
   const [showAll, setShowAll] = useState(false);
   const [shareToast, setShareToast] = useState<string | null>(null);
   const [shareMenuOpen, setShareMenuOpen] = useState<string | null>(null);
+
+  // Persist liked posts to localStorage
+  useEffect(() => {
+    localStorage.setItem('portfolio_liked_posts', JSON.stringify([...likedPosts]));
+  }, [likedPosts]);
+
+  // Persist saved posts to localStorage
+  useEffect(() => {
+    localStorage.setItem('portfolio_saved_posts', JSON.stringify([...savedPosts]));
+  }, [savedPosts]);
 
   // Close share menu on outside click
   useEffect(() => {
@@ -65,23 +89,18 @@ export function BlogSection() {
 
   const handleShare = (post: BlogPost) => {
     const url = `${window.location.origin}${window.location.pathname}#blog-${post.id}`;
-    try {
-      const textArea = document.createElement("textarea");
-      textArea.value = url;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-9999px";
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-      setShareToast(post.id);
-      setShareMenuOpen(null);
-      setTimeout(() => setShareToast(null), 2000);
-    } catch {
-      if (navigator.share) {
-        navigator.share({ title: post.title, url }).catch(() => {});
-      }
-    }
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setShareToast(post.id);
+        setShareMenuOpen(null);
+        setTimeout(() => setShareToast(null), 2000);
+      })
+      .catch(() => {
+        if (navigator.share) {
+          navigator.share({ title: post.title, url }).catch(() => {});
+        }
+      });
   };
 
   const shareToTwitter = (post: BlogPost) => {

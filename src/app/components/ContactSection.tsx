@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Globe, CheckCircle, AlertCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { portfolioAPI } from "@/lib/api";
@@ -12,7 +12,6 @@ const contactInfo = [
 const socials = [
   { icon: Github, label: "GitHub", href: "https://github.com/Gech-E" },
   { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/getachewekubay" },
-  { icon: Globe, label: "Portfolio", href: "https://getachewekubay.vercel.app" },
 ];
 
 export function ContactSection() {
@@ -30,10 +29,11 @@ export function ContactSection() {
       setStatus("sent");
       setForm({ name: "", email: "", subject: "", message: "" });
       setTimeout(() => setStatus("idle"), 4000);
-    } catch (err: any) {
-      console.warn("Contact submit failed:", err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      console.warn("Contact submit failed:", message);
       setStatus("error");
-      setErrorMsg("Failed to send. Please try again or email directly.");
+      setErrorMsg("__MAIL_ERROR__");
       setTimeout(() => setStatus("idle"), 4000);
     }
   };
@@ -79,9 +79,10 @@ export function ContactSection() {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={s.label}
                     className="w-10 h-10 rounded-lg bg-slate-800/60 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors"
                   >
-                    <s.icon className="w-4.5 h-4.5" />
+                    <s.icon className="w-[18px] h-[18px]" />
                   </a>
                 ))}
               </div>
@@ -156,7 +157,8 @@ export function ContactSection() {
             {status === "error" && (
               <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2.5" style={{ fontSize: "13px" }}>
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                {errorMsg}
+                Failed to send. Please try again or email directly at{" "}
+                <a href="mailto:getachewekubay8@gmail.com" className="underline hover:text-red-300 transition-colors">getachewekubay8@gmail.com</a>.
               </div>
             )}
 

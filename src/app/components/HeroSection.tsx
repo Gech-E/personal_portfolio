@@ -1,4 +1,4 @@
-import { ArrowDown, Github, Linkedin, Mail, Globe } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { motion } from "motion/react";
 
 export function HeroSection() {
@@ -63,16 +63,16 @@ export function HeroSection() {
               { icon: Github, href: "https://github.com/Gech-E", label: "GitHub" },
               { icon: Linkedin, href: "https://linkedin.com/in/getachewekubay", label: "LinkedIn" },
               { icon: Mail, href: "mailto:getachewekubay8@gmail.com", label: "Email" },
-              { icon: Globe, href: "https://getachewekubay.vercel.app", label: "Website" },
             ].map((s) => (
               <a
                 key={s.label}
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={s.label}
                 className="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors"
               >
-                <s.icon className="w-4.5 h-4.5" />
+                <s.icon className="w-[18px] h-[18px]" />
               </a>
             ))}
           </div>

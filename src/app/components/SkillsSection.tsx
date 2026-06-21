@@ -38,7 +38,7 @@ const fallbackSkillCategories = [
       { name: "TensorFlow", level: 85 },
       { name: "LangChain", level: 86 },
       { name: "Hugging Face", level: 84 },
-      { name: "MULTI AGENT RAG ", level: 80 },
+      { name: "Multi-Agent RAG", level: 80 },
       { name: "AI Agents", level: 82 },
     ],
   },

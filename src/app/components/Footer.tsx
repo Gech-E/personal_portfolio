@@ -9,11 +9,11 @@ export function Footer() {
         </p>
         <div className="flex gap-4">
           {[
-            { icon: Github, href: "https://github.com/Gech-E" },
-            { icon: Linkedin, href: "https://linkedin.com/in/getachewekubay" },
-            { icon: Mail, href: "mailto:getachewekubay8@gmail.com" },
-          ].map((s, i) => (
-            <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-emerald-400 transition-colors">
+            { icon: Github, href: "https://github.com/Gech-E", label: "GitHub" },
+            { icon: Linkedin, href: "https://linkedin.com/in/getachewekubay", label: "LinkedIn" },
+            { icon: Mail, href: "mailto:getachewekubay8@gmail.com", label: "Email" },
+          ].map((s) => (
+            <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="text-slate-500 hover:text-emerald-400 transition-colors">
               <s.icon className="w-4 h-4" />
             </a>
           ))}

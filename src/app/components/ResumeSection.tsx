@@ -46,7 +46,7 @@ export function ResumeSection() {
                   style={{ fontSize: "14px", fontWeight: 600 }}
                 >
                   <Download className="w-4 h-4" />
-                  Download PDF
+                  Save as PDF
                 </button>
                 <button
                   onClick={() => setShowPreview(!showPreview)}
@@ -57,6 +57,7 @@ export function ResumeSection() {
                   {showPreview ? "Hide Preview" : "Preview"}
                 </button>
               </div>
+              <p className="text-slate-500 mt-2" style={{ fontSize: "12px" }}>(Opens print dialog — select &quot;Save as PDF&quot;)</p>
             </div>
           </div>
 
@@ -72,7 +73,7 @@ export function ResumeSection() {
                   <h4 style={{ fontSize: "20px", fontWeight: 700 }}>Getachew Ekubay</h4>
                   <p className="text-slate-300" style={{ fontSize: "13px" }}>Full Stack Developer | AI/ML Engineer</p>
                   <p className="text-slate-400 mt-1" style={{ fontSize: "11px" }}>
-                    Mekelle, Ethiopia · +251 994 659 621 · getachewekubay8@gmail.com
+                    Mekelle, Ethiopia · getachewekubay8@gmail.com
                   </p>
                 </div>
 
@@ -146,7 +147,6 @@ li{margin-bottom:3px}
 <p>Full Stack Developer | AI/ML Engineer</p>
 <div class="contact">
 <span>Mekelle, Ethiopia</span>
-<span>+251 994 659 621</span>
 <span>getachewekubay8@gmail.com</span>
 <span>getachewekubay.vercel.app</span>
 <span>github.com/Gech-E</span>

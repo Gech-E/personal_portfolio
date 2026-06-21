@@ -61,6 +61,7 @@ export function ChatBot() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
+            aria-label="Open AI chat assistant"
             className="fixed bottom-20 right-6 md:bottom-6 md:right-6 z-[9999] w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 flex items-center justify-center cursor-pointer transition-colors"
           >
             <MessageCircle className="w-6 h-6" />
@@ -83,7 +84,7 @@ export function ChatBot() {
             <div className="bg-slate-800/80 backdrop-blur-sm px-5 py-4 flex items-center justify-between border-b border-slate-700/50 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
-                  <Sparkles className="w-4.5 h-4.5 text-emerald-400" />
+                  <Sparkles className="w-[18px] h-[18px] text-emerald-400" />
                 </div>
                 <div>
                   <h3 className="text-white" style={{ fontSize: "14px", fontWeight: 600 }}>RAG Assistant</h3>
