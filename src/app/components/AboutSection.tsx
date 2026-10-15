@@ -1,331 +1,83 @@
-import {
-  Code,
-  Brain,
-  Cpu,
-  Users,
-  Wrench,
-  Layers,
-  Zap,
-  Target,
-} from "lucide-react";
-import { motion } from "motion/react";
-
-const stats = [
-  { label: "CGPA", value: "3.93/4.0" },
-  { label: "Projects Built", value: "10+" },
-  { label: "AI Models Deployed", value: "6+" },
-  { label: "Workshops Led", value: "12+" },
-];
-
-const whatIBring = [
-  {
-    icon: Brain,
-    title: "AI/ML & Research",
-    desc: "Implementing advanced architectures — including Vision Transformers (ViT) and Deep Learning models — to solve industrial automation and computer vision challenges.",
-  },
-  {
-    icon: Code,
-    title: "Full-Stack Engineering",
-    desc: "Developing scalable web applications and software systems that are architecturally sound, secure, and user-centric.",
-  },
-  {
-    icon: Users,
-    title: "Leadership & Innovation",
-    desc: "Deep passion for technical mentorship and community impact. Translating complex technical roadmaps into clear, executable strategies for collaborative teams.",
-  },
-  {
-    icon: Cpu,
-    title: "Robotics & Automation",
-    desc: "Intelligent control systems and automation — bridging the gap between software intelligence and physical-world applications.",
-  },
-];
-
-const techStack = [
-  {
-    label: "Languages",
-    items: ["Python", "JavaScript", "C++", "SQL", "TypeScript"],
-  },
-  {
-    label: "AI/ML",
-    items: [
-      "PyTorch",
-      "TensorFlow",
-      "Computer Vision",
-      "Contrastive Learning",
-      "Vision Transformers",
-    ],
-  },
-  {
-    label: "Full-Stack",
-    items: [
-      "React",
-      "Next.js",
-      "FastAPI",
-      "Flask",
-      "MLOps",
-      "System Architecture",
-    ],
-  },
-  { label: "Robotics", items: ["Intelligent Control Systems", "Automation"] },
-];
+import { AnimatedSection } from "./ui/AnimatedSection";
+import { SectionHeader } from "./ui/SectionHeader";
+import { Code2, Brain, Rocket, Users } from "lucide-react";
 
 export function AboutSection() {
+  const stats = [
+    { label: "CGPA", value: "3.93/4.0", desc: "Mekelle University" },
+    { label: "Projects", value: "15+", desc: "Completed" },
+    { label: "AI Models", value: "8+", desc: "Deployed" },
+    { label: "Mentored", value: "500+", desc: "Students" },
+  ];
+
+  const focusAreas = [
+    { icon: Brain, title: "AI & Machine Learning", desc: "Recommendation Systems, Computer Vision, NLP, RAG, Speech Recognition, AI Agents, LangChain" },
+    { icon: Code2, title: "Full-Stack Development", desc: "FastAPI, Node.js, Express.js, Nest.js, React, Next.js, Tailwind CSS" },
+    { icon: Users, title: "Leadership & Community", desc: "CTO experience, Tech Club coordination, mentoring" },
+    { icon: Rocket, title: "Intelligent Systems", desc: "Building scalable AI solutions that solve real-world problems" },
+  ];
+
   return (
-    <section id="about" className="py-24 bg-slate-950">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <p
-            className="text-emerald-400 mb-2"
-            style={{
-              fontSize: "13px",
-              fontWeight: 600,
-              letterSpacing: "0.1em",
-            }}
-          >
-            ABOUT ME
-          </p>
-          <h2
-            className="text-white mb-6 max-w-3xl"
-            style={{ fontSize: "32px", fontWeight: 700, lineHeight: 1.4 }}
-          >
-            A Builder at{" "}
-            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>
-              the intersection of{" "}
-            </span>
-            <span className="text-emerald-400" style={{ fontSize: "17px", fontWeight: 600 }}>
-              AI/ML Engineering
-            </span>
-            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>
-              ,{" "}
-            </span>
-            <span className="text-emerald-400" style={{ fontSize: "17px", fontWeight: 600 }}>
-              Full-Stack Development
-            </span>
-            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>
-              , and{" "}
-            </span>
-            <span className="text-emerald-400" style={{ fontSize: "17px", fontWeight: 600 }}>
-              Robotics
-            </span>
-            <span className="text-slate-400" style={{ fontSize: "17px", fontWeight: 400 }}>.</span>
-          </h2>
-        </motion.div>
+    <section id="about" className="py-24 bg-surface-alt relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <SectionHeader 
+          title="About Me" 
+          subtitle="A passionate engineer focused on the intersection of artificial intelligence and scalable software architecture."
+        />
 
-        {/* Main bio content — replaces image */}
-        <div className="grid lg:grid-cols-5 gap-10 mb-16">
-          {/* Left: narrative block */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-3"
-          >
-            <div className="bg-slate-800/30 border border-slate-700/40 rounded-2xl p-8 space-y-5 relative overflow-hidden">
-              {/* Decorative gradient */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-36 h-36 bg-blue-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        <div className="grid lg:grid-cols-2 gap-16 items-center mt-12">
+          
+          {/* Left Column: Narrative */}
+          <AnimatedSection direction="right" className="space-y-6 text-lg text-muted-foreground">
+            <p>
+              I am an Electrical and Computer Engineer specializing in Artificial Intelligence and Full-Stack Development. My journey began with a curiosity about how hardware and software integrate, leading me to graduate with <strong className="text-foreground">Great Distinction (3.93 CGPA)</strong> from Mekelle University.
+            </p>
+            <p>
+              As the former <strong className="text-foreground">CTO & Co-Founder of Gemed Solutions</strong>, I led technical teams to deliver custom digital solutions, bridging the gap between business needs and technical implementation. Today, my focus is on <strong className="text-foreground">Agentic AI and RAG pipelines</strong> — building systems that don't just process data, but reason and take autonomous action.
+            </p>
+            
+            <blockquote className="border-l-4 border-blue-500 pl-6 py-2 my-8 italic text-foreground font-medium text-xl bg-gradient-to-r from-blue-500/10 to-transparent rounded-r-xl">
+              "My mission is to build intelligent software products that solve real-world problems and bridge traditional systems with AI-powered technologies."
+            </blockquote>
+            
+            <p>
+              Beyond coding, I'm deeply committed to community building. As a Tech Club Coordinator, I've had the privilege of organizing workshops and hackathons, mentoring over 500 students in programming fundamentals and AI.
+            </p>
+          </AnimatedSection>
 
-              <div className="relative z-10 space-y-5">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                    <Target className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <h3
-                    className="text-white"
-                    style={{ fontSize: "18px", fontWeight: 600 }}
-                  >
-                    My Approach
-                  </h3>
-                </div>
-
-                <p
-                  className="text-slate-300"
-                  style={{ fontSize: "14.5px", lineHeight: 1.85 }}
-                >
-                  As an{" "}
-                  <span className="text-white" style={{ fontWeight: 500 }}>
-                    AI/ML Engineer
-                  </span>{" "}
-                  and{" "}
-                  <span className="text-white" style={{ fontWeight: 500 }}>
-                    AI-Powered Full-Stack Developer
-                  </span>
-                  , I focus on engineering intelligent, scalable systems that
-                  bridge the gap between cutting-edge research and
-                  production-grade applications.
-                </p>
-
-                <p
-                  className="text-slate-400"
-                  style={{ fontSize: "14.5px", lineHeight: 1.85 }}
-                >
-                  My approach is end-to-end: I don't just train state-of-the-art
-                  models — I architect the{" "}
-                  <span className="text-slate-200" style={{ fontWeight: 500 }}>
-                    robust full-stack ecosystems
-                  </span>{" "}
-                  required to deploy them into real-world industrial
-                  environments. From developing vision-based anomaly detection
-                  engines using contrastive learning, to building RAG-driven
-                  platforms and agentic automation workflows, I thrive on
-                  turning complex machine learning capabilities into seamless,
-                  high-impact software solutions.
-                </p>
-
-                <div className="flex items-center gap-3 pt-2">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                    <Zap className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <h3
-                    className="text-white"
-                    style={{ fontSize: "18px", fontWeight: 600 }}
-                  >
-                    What Drives Me
-                  </h3>
-                </div>
-
-                <p
-                  className="text-slate-400"
-                  style={{ fontSize: "14.5px", lineHeight: 1.85 }}
-                >
-                  I'm driven by continuous learning and the challenge of
-                  building systems that are not only functional but also{" "}
-                  <span className="text-slate-200" style={{ fontWeight: 500 }}>
-                    scalable and intelligent
-                  </span>
-                  . If you're building something ambitious in the realm of AI,
-                  Robotics, or Software Engineering — let's connect.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right: stats + CTA */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-2 flex flex-col gap-5"
-          >
-            {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-3">
-              {stats.map((s) => (
-                <div
-                  key={s.label}
-                  className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5 text-center"
-                >
-                  <p
-                    className="text-emerald-400"
-                    style={{ fontSize: "26px", fontWeight: 700 }}
-                  >
-                    {s.value}
-                  </p>
-                  <p
-                    className="text-slate-400 mt-1"
-                    style={{ fontSize: "12px", fontWeight: 500 }}
-                  >
-                    {s.label}
-                  </p>
+          {/* Right Column: Stats & Focus Areas */}
+          <AnimatedSection direction="left" delay={0.2} className="space-y-10">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {stats.map((stat, idx) => (
+                <div key={idx} className="glass-card p-6 rounded-2xl text-center">
+                  <div className="text-3xl font-bold text-gradient mb-1 font-['Space_Grotesk']">{stat.value}</div>
+                  <div className="font-semibold text-foreground mb-1">{stat.label}</div>
+                  <div className="text-sm text-muted-foreground">{stat.desc}</div>
                 </div>
               ))}
             </div>
 
-            {/* Tech stack tags */}
-            <div className="bg-slate-800/30 border border-slate-700/40 rounded-xl p-5 flex-1">
-              <div className="flex items-center gap-2 mb-4">
-                <Wrench className="w-4 h-4 text-emerald-400" />
-                <h4
-                  className="text-white"
-                  style={{ fontSize: "14px", fontWeight: 600 }}
-                >
-                  Technical Stack
-                </h4>
-              </div>
-              <div className="space-y-4">
-                {techStack.map((cat) => (
-                  <div key={cat.label}>
-                    <p
-                      className="text-slate-500 mb-1.5"
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: 600,
-                        letterSpacing: "0.05em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {cat.label}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {cat.items.map((item) => (
-                        <span
-                          key={item}
-                          className="bg-slate-700/50 text-slate-300 px-2.5 py-1 rounded-md"
-                          style={{ fontSize: "11.5px", fontWeight: 500 }}
-                        >
-                          {item}
-                        </span>
-                      ))}
+            {/* Focus Areas */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-foreground mb-4">Core Focus</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {focusAreas.map((area, idx) => (
+                  <div key={idx} className="flex gap-4 items-start p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-border">
+                    <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-500 shrink-0">
+                      <area.icon size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground text-sm mb-1">{area.title}</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{area.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          </motion.div>
-        </div>
+          </AnimatedSection>
 
-        {/* What I Bring — 4 cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-2 mb-6">
-            <Layers className="w-5 h-5 text-emerald-400" />
-            <h3
-              className="text-white"
-              style={{ fontSize: "20px", fontWeight: 600 }}
-            >
-              What I Bring to the Table
-            </h3>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {whatIBring.map((h, i) => (
-              <motion.div
-                key={h.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-6 hover:border-emerald-500/40 transition-all hover:-translate-y-1 group"
-              >
-                <div className="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 transition-colors">
-                  <h.icon className="w-[22px] h-[22px] text-emerald-400" />
-                </div>
-                <h4
-                  className="text-white mb-2"
-                  style={{ fontSize: "15px", fontWeight: 600 }}
-                >
-                  {h.title}
-                </h4>
-                <p
-                  className="text-slate-400"
-                  style={{ fontSize: "13px", lineHeight: 1.65 }}
-                >
-                  {h.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

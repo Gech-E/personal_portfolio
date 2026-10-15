@@ -1,149 +1,205 @@
-import { ExternalLink, Github, Brain, ShoppingCart, Stethoscope, Eye, Search, AlertTriangle } from "lucide-react";
-import { motion } from "motion/react";
-import { useState, useEffect } from "react";
-import { portfolioAPI, type ProjectFromAPI } from "@/lib/api";
-import { default as fallbackProjectsData, iconMap as dataIconMap } from '../data/projects';
-
-const iconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
-  Brain,
-  ShoppingCart,
-  Stethoscope,
-  Eye,
-  Search,
-  AlertTriangle,
-};
-
-const fallbackProjects: DisplayProject[] = fallbackProjectsData.map((p) => ({
-  title: p.title,
-  desc: p.desc,
-  tags: p.tags,
-  icon: (p.icon && dataIconMap[p.icon]) || Brain,
-  color: p.color,
-  github_url: p.githubUrl,
-  demo_url: p.liveUrl,
-}));
-
-const filters = ["All", "AI/ML", "Full-Stack", "Computer Vision"];
-
-function getFilter(tags: string[]): string[] {
-  const cats: string[] = ["All"];
-  const ml = ["Scikit-learn", "TensorFlow", "PyTorch", "LangChain", "RAG", "Hugging Face", "Agentic AI", "Contrastive Learning"];
-  const cv = ["OpenCV"];
-  const fs = ["Next.js", "React", "FastAPI", "PostgreSQL", "Vercel", "Docker"];
-  if (tags.some((t) => ml.includes(t))) cats.push("AI/ML");
-  if (tags.some((t) => cv.includes(t))) cats.push("Computer Vision");
-  if (tags.some((t) => fs.includes(t))) cats.push("Full-Stack");
-  return cats;
-}
-
-interface DisplayProject {
-  title: string;
-  desc: string;
-  tags: string[];
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
-  color: string;
-  github_url?: string | null;
-  demo_url?: string | null;
-}
-
-function mapApiProjects(apiProjects: ProjectFromAPI[]): DisplayProject[] {
-  return apiProjects.map((p) => ({
-    title: p.title,
-    desc: p.description,
-    tags: p.technologies,
-    icon: (p.icon_name && iconMap[p.icon_name]) || Brain,
-    color: p.color || "#34d399",
-    github_url: p.github_url,
-    demo_url: p.demo_url,
-  }));
-}
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { ExternalLink, Github, ChevronRight } from "lucide-react";
+import projectsData, { iconMap, getProjectFilters, filterConfig } from "../data/projects";
+import { AnimatedSection } from "./ui/AnimatedSection";
+import { SectionHeader } from "./ui/SectionHeader";
+import { SkillBadge } from "./ui/SkillBadge";
+import { GradientButton } from "./ui/GradientButton";
 
 export function ProjectsSection() {
   const [activeFilter, setActiveFilter] = useState("All");
-  const [projects, setProjects] = useState<DisplayProject[]>(fallbackProjects);
+  const filters = ["All", ...filterConfig.map(f => f.label)];
 
-  useEffect(() => {
-    portfolioAPI
-      .getProjects()
-      .then((data) => {
-        if (data.length > 0) {
-          setProjects(mapApiProjects(data));
-        }
-      })
-      .catch((err) => {
-        console.warn("Using fallback projects:", err.message);
-      });
-  }, []);
+  const filteredProjects = projectsData.filter((project) => {
+    if (activeFilter === "All") return true;
+    const projectCategories = getProjectFilters(project.tags);
+    return projectCategories.includes(activeFilter);
+  });
 
-  const filtered = activeFilter === "All" ? projects : projects.filter((p) => getFilter(p.tags).includes(activeFilter));
+  const featuredProjects = filteredProjects.filter(p => p.featured);
+  const otherProjects = filteredProjects.filter(p => !p.featured);
 
   return (
-    <section id="projects" className="py-20" style={{ background: "linear-gradient(180deg, #1e293b 0%, #0f172a 100%)" }}>
-      <div className="max-w-6xl mx-auto px-6">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <p className="text-emerald-400 mb-2" style={{ fontSize: "13px", fontWeight: 600, letterSpacing: "0.1em" }}>PORTFOLIO</p>
-          <h2 className="text-white mb-4" style={{ fontSize: "32px", fontWeight: 700 }}>Featured Projects</h2>
-          <p className="text-slate-400 max-w-2xl mb-8" style={{ fontSize: "15px", lineHeight: 1.7 }}>
-            Production-grade AI and full-stack solutions solving real problems in healthcare, e-commerce, and beyond.
-          </p>
-        </motion.div>
+    <section id="projects" className="py-24 bg-background">
+      <div className="max-w-7xl mx-auto px-6">
+        <SectionHeader 
+          title="Featured Work" 
+          subtitle="A selection of my recent software and AI engineering projects."
+        />
 
-        <div className="flex flex-wrap gap-2 mb-10">
-          {filters.map((f) => (
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          {filters.map((filter) => (
             <button
-              key={f}
-              onClick={() => setActiveFilter(f)}
-              className={`px-4 py-2 rounded-lg transition-colors cursor-pointer ${
-                activeFilter === f
-                  ? "bg-emerald-500 text-white"
-                  : "bg-slate-800/60 text-slate-400 hover:text-white border border-slate-700/50"
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                activeFilter === filter
+                  ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
-              style={{ fontSize: "13px", fontWeight: 500 }}
             >
-              {f}
+              {filter}
             </button>
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((p, i) => (
-            <motion.div
-              key={p.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="group bg-slate-800/40 border border-slate-700/40 rounded-xl p-6 hover:border-emerald-500/40 transition-all hover:-translate-y-1"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-11 h-11 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${p.color}15` }}>
-                  <p.icon className="w-[22px] h-[22px]" style={{ color: p.color }} />
-                </div>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {p.github_url && (
-                    <a href={p.github_url} target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
-                      <Github className="w-4 h-4" />
-                    </a>
-                  )}
-                  {p.demo_url && (
-                    <a href={p.demo_url} target="_blank" rel="noopener noreferrer" aria-label="View live demo" className="w-8 h-8 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors cursor-pointer">
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  )}
-                </div>
-              </div>
+        <AnimatePresence mode="popLayout">
+          {/* Featured Projects */}
+          <div className="space-y-12 mb-16">
+            {featuredProjects.map((project, idx) => {
+              const Icon = iconMap[project.icon] || iconMap["Bot"];
+              const isEven = idx % 2 === 0;
+              
+              return (
+                <motion.div
+                  key={project.id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5 }}
+                  className={`glass-card rounded-3xl overflow-hidden flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
+                >
+                  {/* Image/Visual Area */}
+                  <div className="lg:w-1/2 min-h-[300px] relative p-8 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-400/5" />
+                    <div className="relative z-10 w-full h-full rounded-2xl overflow-hidden border border-border shadow-2xl bg-white dark:bg-slate-800 flex items-center justify-center group">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-end p-6">
+                         <div className="flex gap-4 transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                           {project.githubUrl && (
+                             <a 
+                               href={project.githubUrl} 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               aria-label={`View ${project.title} source code on GitHub`}
+                               className="p-2 rounded-full bg-white/20 backdrop-blur hover:bg-white/40 text-white transition-colors"
+                             >
+                               <Github size={20} />
+                             </a>
+                           )}
+                           {project.liveUrl && (
+                             <a 
+                               href={project.liveUrl} 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               aria-label={`View live demo for ${project.title}`}
+                               className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-lg"
+                             >
+                               <ExternalLink size={20} />
+                             </a>
+                           )}
+                         </div>
+                      </div>
+                      <Icon size={80} style={{ color: project.color }} className="opacity-50 group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                  </div>
 
-              <h3 className="text-white mb-2" style={{ fontSize: "16px", fontWeight: 600 }}>{p.title}</h3>
-              <p className="text-slate-400 mb-4" style={{ fontSize: "13px", lineHeight: 1.65 }}>{p.desc}</p>
+                  {/* Content Area */}
+                  <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20" style={{ color: project.color }}>
+                        <Icon size={20} />
+                      </div>
+                      <span className="text-sm font-bold text-blue-500 tracking-wider uppercase">Featured Project</span>
+                    </div>
+                    
+                    <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4 font-['Space_Grotesk']">{project.title}</h3>
+                    
+                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-border mb-6">
+                      <p className="text-muted-foreground leading-relaxed mb-3">{project.desc}</p>
+                      {project.impact && (
+                        <p className="text-sm font-medium text-foreground flex gap-2">
+                          <span className="text-emerald-500">↑</span> {project.impact}
+                        </p>
+                      )}
+                    </div>
 
-              <div className="flex flex-wrap gap-1.5">
-                {p.tags.map((t) => (
-                  <span key={t} className="bg-slate-700/50 text-slate-300 px-2.5 py-0.5 rounded-md" style={{ fontSize: "11px", fontWeight: 500 }}>{t}</span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                    <div className="flex flex-wrap gap-2 mb-8">
+                      {project.tags.map(tag => <SkillBadge key={tag} name={tag} />)}
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-4 mt-auto">
+                      {project.githubUrl && (
+                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold hover:text-blue-500 transition-colors">
+                          <Github size={18} /> Source Code
+                        </a>
+                      )}
+                      {project.liveUrl && (
+                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors">
+                          <ExternalLink size={18} /> Live Demo
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Other Projects Grid */}
+          {otherProjects.length > 0 && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {otherProjects.map((project) => {
+                const Icon = iconMap[project.icon] || iconMap["Bot"];
+                return (
+                  <motion.div
+                    key={project.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    className="glass-card p-6 rounded-2xl flex flex-col h-full group"
+                  >
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800" style={{ color: project.color }}>
+                        <Icon size={24} />
+                      </div>
+                      <div className="flex gap-3 text-muted-foreground">
+                        {project.githubUrl && (
+                          <a 
+                            href={project.githubUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            aria-label={`View ${project.title} source code on GitHub`}
+                            className="hover:text-foreground transition-colors p-1"
+                          >
+                            <Github size={20} />
+                          </a>
+                        )}
+                        {project.liveUrl && (
+                          <a 
+                            href={project.liveUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            aria-label={`View live demo for ${project.title}`}
+                            className="hover:text-blue-500 transition-colors p-1"
+                          >
+                            <ExternalLink size={20} />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    <h4 className="text-xl font-bold text-foreground mb-3 group-hover:text-blue-500 transition-colors">{project.title}</h4>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">{project.desc}</p>
+
+                    <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-border">
+                      {project.tags.slice(0, 3).map(tag => (
+                        <span key={tag} className="text-xs font-medium text-slate-500 dark:text-slate-400">{tag}</span>
+                      ))}
+                      {project.tags.length > 3 && (
+                        <span className="text-xs font-medium text-slate-400">+{project.tags.length - 3}</span>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

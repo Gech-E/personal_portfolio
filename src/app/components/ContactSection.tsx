@@ -1,185 +1,119 @@
-import { Mail, Phone, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle } from "lucide-react";
-import { motion } from "motion/react";
-import { useState } from "react";
-import { portfolioAPI } from "@/lib/api";
-
-const contactInfo = [
-  { icon: Mail, label: "Email", value: "getachewekubay8@gmail.com", href: "mailto:getachewekubay8@gmail.com" },
-  { icon: Phone, label: "Phone", value: "+251 994 659 621", href: "tel:+251994659621" },
-  { icon: MapPin, label: "Location", value: "Mekelle, Ethiopia", href: "#" },
-];
-
-const socials = [
-  { icon: Github, label: "GitHub", href: "https://github.com/Gech-E" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/getachewekubay" },
-];
+import { AnimatedSection } from "./ui/AnimatedSection";
+import { SectionHeader } from "./ui/SectionHeader";
+import { GradientButton } from "./ui/GradientButton";
+import { Mail, MapPin, Phone, Linkedin, Github } from "lucide-react";
 
 export function ContactSection() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("sending");
-    setErrorMsg("");
-
-    try {
-      await portfolioAPI.submitContact(form);
-      setStatus("sent");
-      setForm({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setStatus("idle"), 4000);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      console.warn("Contact submit failed:", message);
-      setStatus("error");
-      setErrorMsg("__MAIL_ERROR__");
-      setTimeout(() => setStatus("idle"), 4000);
-    }
-  };
-
   return (
-    <section id="contact" className="py-20" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1e293b 100%)" }}>
-      <div className="max-w-6xl mx-auto px-6">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-          <p className="text-emerald-400 mb-2" style={{ fontSize: "13px", fontWeight: 600, letterSpacing: "0.1em" }}>GET IN TOUCH</p>
-          <h2 className="text-white mb-4" style={{ fontSize: "32px", fontWeight: 700 }}>Let's Work Together</h2>
-          <p className="text-slate-400 max-w-2xl mb-12" style={{ fontSize: "15px", lineHeight: 1.7 }}>
-            Interested in collaborating on AI/ML projects or need a full-stack developer? I'd love to hear from you.
-          </p>
-        </motion.div>
+    <section id="contact" className="py-24 bg-surface-alt relative border-t border-border">
+      <div className="max-w-7xl mx-auto px-6">
+        <SectionHeader 
+          title="Get In Touch" 
+          subtitle="I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision."
+        />
 
-        <div className="grid lg:grid-cols-5 gap-10">
-          <div className="lg:col-span-2 space-y-6">
-            {contactInfo.map((c) => (
-              <motion.a
-                key={c.label}
-                href={c.href}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="flex items-center gap-4 group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/20 transition-colors">
-                  <c.icon className="w-5 h-5 text-emerald-400" />
+        <div className="grid lg:grid-cols-2 gap-16 mt-16 max-w-5xl mx-auto">
+          
+          <AnimatedSection direction="right" className="space-y-8">
+            <h3 className="text-3xl font-bold text-foreground font-['Space_Grotesk'] mb-2">Let's build something <span className="text-blue-500">great together.</span></h3>
+            <p className="text-muted-foreground text-lg mb-8">
+              Whether you have a specific project in mind or just want to explore possibilities, I'd love to hear from you.
+            </p>
+            
+            <div className="space-y-6">
+              <a href="mailto:getachewekubay8@gmail.com" className="flex items-center gap-4 p-4 rounded-xl glass-card hover:border-blue-500 transition-colors group">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-lg group-hover:scale-110 transition-transform">
+                  <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-slate-400" style={{ fontSize: "12px", fontWeight: 500 }}>{c.label}</p>
-                  <p className="text-white group-hover:text-emerald-400 transition-colors" style={{ fontSize: "14px", fontWeight: 500 }}>{c.value}</p>
+                  <div className="text-sm text-muted-foreground font-medium mb-1">Email</div>
+                  <div className="text-foreground font-semibold group-hover:text-blue-500 transition-colors">getachewekubay8@gmail.com</div>
                 </div>
-              </motion.a>
-            ))}
-
-            <div className="pt-4">
-              <p className="text-slate-400 mb-3" style={{ fontSize: "13px", fontWeight: 500 }}>Follow me</p>
-              <div className="flex gap-3">
-                {socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={s.label}
-                    className="w-10 h-10 rounded-lg bg-slate-800/60 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:border-emerald-500 transition-colors"
-                  >
-                    <s.icon className="w-[18px] h-[18px]" />
-                  </a>
-                ))}
+              </a>
+              
+              <div className="flex items-center gap-4 p-4 rounded-xl glass-card">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-lg">
+                  <MapPin className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground font-medium mb-1">Location</div>
+                  <div className="text-foreground font-semibold">Addis Ababa, Ethiopia</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4 p-4 rounded-xl glass-card">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-lg">
+                  <Phone className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground font-medium mb-1">Phone</div>
+                  <div className="text-foreground font-semibold">+251 92 654 3530</div>
+                </div>
               </div>
             </div>
-          </div>
-
-          <motion.form
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-3 bg-slate-800/40 border border-slate-700/40 rounded-2xl p-6 md:p-8 space-y-5"
-          >
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div>
-                <label className="text-slate-300 mb-1.5 block" style={{ fontSize: "13px", fontWeight: 500 }}>Name</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full bg-slate-700/40 border border-slate-600/50 rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none transition-colors"
-                  style={{ fontSize: "14px" }}
-                  placeholder="Your name"
-                  required
+            
+            <div className="pt-4 flex gap-4">
+              <a 
+                href="https://linkedin.com/in/getachewekubay" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="Visit LinkedIn profile"
+                className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://github.com/Gech-E" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="Visit GitHub profile"
+                className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+            </div>
+          </AnimatedSection>
+          
+          <AnimatedSection direction="left" delay={0.2}>
+            <form className="glass-card p-8 rounded-3xl space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <h3 className="text-2xl font-bold text-foreground mb-6">Send a Message</h3>
+              
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium text-foreground">Full Name</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-foreground"
+                  placeholder="John Doe"
                 />
               </div>
-              <div>
-                <label className="text-slate-300 mb-1.5 block" style={{ fontSize: "13px", fontWeight: 500 }}>Email</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full bg-slate-700/40 border border-slate-600/50 rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none transition-colors"
-                  style={{ fontSize: "14px" }}
-                  placeholder="your@email.com"
-                  required
+              
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium text-foreground">Email Address</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-foreground"
+                  placeholder="john@example.com"
                 />
               </div>
-            </div>
-            <div>
-              <label className="text-slate-300 mb-1.5 block" style={{ fontSize: "13px", fontWeight: 500 }}>Subject</label>
-              <input
-                type="text"
-                value={form.subject}
-                onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                className="w-full bg-slate-700/40 border border-slate-600/50 rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none transition-colors"
-                style={{ fontSize: "14px" }}
-                placeholder="Project collaboration"
-                required
-              />
-            </div>
-            <div>
-              <label className="text-slate-300 mb-1.5 block" style={{ fontSize: "13px", fontWeight: 500 }}>Message</label>
-              <textarea
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                rows={4}
-                className="w-full bg-slate-700/40 border border-slate-600/50 rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none transition-colors resize-none"
-                style={{ fontSize: "14px" }}
-                placeholder="Tell me about your project..."
-                required
-              />
-            </div>
-
-            {status === "sent" && (
-              <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2.5" style={{ fontSize: "13px" }}>
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                Message sent successfully! I'll get back to you soon.
+              
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium text-foreground">Message</label>
+                <textarea 
+                  id="message" 
+                  rows={4}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none text-foreground"
+                  placeholder="How can I help you?"
+                ></textarea>
               </div>
-            )}
-            {status === "error" && (
-              <div className="flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2.5" style={{ fontSize: "13px" }}>
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                Failed to send. Please try again or email directly at{" "}
-                <a href="mailto:getachewekubay8@gmail.com" className="underline hover:text-red-300 transition-colors">getachewekubay8@gmail.com</a>.
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={status === "sending"}
-              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white px-8 py-3 rounded-lg transition-colors cursor-pointer w-full justify-center sm:w-auto disabled:cursor-not-allowed"
-              style={{ fontSize: "14px", fontWeight: 600 }}
-            >
-              {status === "sending" ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Sending...
-                </>
-              ) : status === "sent" ? (
-                "Message Sent!"
-              ) : (
-                <><Send className="w-4 h-4" /> Send Message</>
-              )}
-            </button>
-          </motion.form>
+              
+              <GradientButton type="submit" className="w-full">
+                Send Message
+              </GradientButton>
+            </form>
+          </AnimatedSection>
+          
         </div>
       </div>
     </section>

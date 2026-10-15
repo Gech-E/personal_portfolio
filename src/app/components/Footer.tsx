@@ -1,22 +1,21 @@
-import { Heart, Github, Linkedin, Mail } from "lucide-react";
-
 export function Footer() {
+  const year = new Date().getFullYear();
+  
   return (
-    <footer className="bg-slate-950 border-t border-slate-800/50 py-8">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-slate-500" style={{ fontSize: "13px" }}>
-          © 2026 Getachew Ekubay. Built with <Heart className="w-3.5 h-3.5 inline text-emerald-400 mx-0.5" /> using React & Tailwind.
+    <footer className="py-8 bg-background border-t border-border">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="text-xl font-bold font-['Space_Grotesk'] tracking-tight">
+          <span className="text-foreground">Getachew</span>
+          <span className="text-blue-500">.</span>
+        </div>
+        
+        <p className="text-muted-foreground text-sm">
+          &copy; {year} Getachew Ekubay. All rights reserved.
         </p>
-        <div className="flex gap-4">
-          {[
-            { icon: Github, href: "https://github.com/Gech-E", label: "GitHub" },
-            { icon: Linkedin, href: "https://linkedin.com/in/getachewekubay", label: "LinkedIn" },
-            { icon: Mail, href: "mailto:getachewekubay8@gmail.com", label: "Email" },
-          ].map((s) => (
-            <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="text-slate-500 hover:text-emerald-400 transition-colors">
-              <s.icon className="w-4 h-4" />
-            </a>
-          ))}
+        
+        <div className="flex gap-6 text-sm font-medium text-slate-500 dark:text-slate-400">
+          <a href="#" className="hover:text-blue-500 transition-colors">Privacy</a>
+          <a href="#" className="hover:text-blue-500 transition-colors">Terms</a>
         </div>
       </div>
     </footer>

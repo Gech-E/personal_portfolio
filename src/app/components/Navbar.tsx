@@ -1,135 +1,166 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Download } from "lucide-react";
+import { Menu, X, Moon, Sun, Download } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { useTheme } from "../../hooks/useTheme";
+import { useActiveSection } from "../../hooks/useActiveSection";
+import { GradientButton } from "./ui/GradientButton";
 
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
+const SECTION_IDS = [
+  "home",
+  "about",
+  "skills",
+  "experience",
+  "education",
+  "projects",
+  "achievements",
+  "testimonials",
+  "blog",
+  "contact",
 ];
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [active, setActive] = useState("home");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  
+  const activeSection = useActiveSection(SECTION_IDS);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(e.target.id);
-        });
-      },
-      { rootMargin: "-40% 0px -60% 0px" }
-    );
-    navLinks.forEach((l) => {
-      const el = document.getElementById(l.href.slice(1));
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollTo = (href: string) => {
-    setMobileOpen(false);
-    setTimeout(() => {
-      const el = document.querySelector(href);
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
-    }, 50);
+  const scrollTo = (id: string) => {
+    setMobileMenuOpen(false);
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
   };
 
+  const navLinks = [
+    { name: "About", id: "about" },
+    { name: "Experience", id: "experience" },
+    { name: "Projects", id: "projects" },
+    { name: "Blog", id: "blog" },
+    { name: "Contact", id: "contact" },
+  ];
+
   return (
-    <nav
+    <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-slate-900/95 backdrop-blur-md shadow-lg" : "bg-transparent"
+        isScrolled ? "glass py-4" : "bg-transparent py-6"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
-        <button onClick={() => scrollTo("#home")} aria-label="Home" className="text-white cursor-pointer" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "20px", fontWeight: 700 }}>
-          GE<span className="text-emerald-400">.</span>
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        {/* Logo */}
+        <button 
+          className="text-xl font-bold font-['Space_Grotesk'] tracking-tight cursor-pointer bg-transparent border-none p-0 flex items-center"
+          onClick={() => scrollTo("home")}
+          aria-label="Getachew Ekubay - Back to top"
+        >
+          <span className="text-foreground">Getachew</span>
+          <span className="text-blue-500">.</span>
         </button>
 
-        {/* Desktop */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((l) => (
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
+          {navLinks.map((link) => (
             <button
-              key={l.href}
-              onClick={() => scrollTo(l.href)}
-              className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
-                active === l.href.slice(1) ? "text-emerald-400" : "text-slate-300 hover:text-white"
+              key={link.name}
+              onClick={() => scrollTo(link.id)}
+              className={`text-sm font-medium transition-colors hover:text-blue-500 ${
+                activeSection === link.id ? "text-blue-500" : "text-muted-foreground"
               }`}
-              style={{ fontSize: "13px", fontWeight: 500 }}
             >
-              {l.label}
+              {link.name}
             </button>
           ))}
-          <button
-            onClick={() => scrollTo("#resume")}
-            className="ml-3 flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer"
-            style={{ fontSize: "13px", fontWeight: 600 }}
+          
+          <div className="flex items-center gap-4 ml-4 pl-4 border-l border-border">
+            <button 
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-muted-foreground transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            
+            <GradientButton 
+              onClick={() => window.open('/Getachew_Ekubay_AI_Engineer_Resume.pdf', '_blank')}
+              className="!py-2 !px-4 text-sm"
+              aria-label="Download resume PDF"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Resume
+            </GradientButton>
+          </div>
+        </nav>
+
+        {/* Mobile Menu Toggle */}
+        <div className="flex items-center gap-4 md:hidden">
+          <button 
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-muted-foreground"
+            aria-label="Toggle theme"
           >
-            <Download className="w-3.5 h-3.5" />
-            Resume
+            {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 text-foreground"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
-
-        {/* Mobile toggle */}
-        <button onClick={() => setMobileOpen(!mobileOpen)} aria-expanded={mobileOpen} aria-label="Toggle navigation menu" className="md:hidden text-white cursor-pointer">
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
-        {mobileOpen && (
+        {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden bg-slate-900/98 backdrop-blur-md border-t border-slate-700/50 overflow-hidden"
+            className="md:hidden glass border-t border-border/50 mt-4 overflow-hidden"
           >
-            <div className="px-6 py-4 space-y-1">
-              {navLinks.map((l) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollTo(l.href);
-                  }}
-                  className={`block w-full text-left px-3 py-2 rounded-md cursor-pointer transition-colors ${
-                    active === l.href.slice(1) ? "text-emerald-400 bg-slate-800" : "text-slate-300 hover:bg-slate-800/50"
+            <div className="flex flex-col px-6 py-4 gap-4">
+              {navLinks.map((link) => (
+                <button
+                  key={link.name}
+                  onClick={() => scrollTo(link.id)}
+                  className={`text-left py-2 text-lg font-medium ${
+                    activeSection === link.id ? "text-blue-500" : "text-foreground"
                   }`}
-                  style={{ fontSize: "14px" }}
                 >
-                  {l.label}
-                </a>
+                  {link.name}
+                </button>
               ))}
-              <button
-                onClick={() => scrollTo("#resume")}
-                className="mt-2 w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white py-2.5 rounded-lg cursor-pointer"
-                style={{ fontSize: "14px", fontWeight: 600 }}
-              >
-                <Download className="w-4 h-4" />
-                Resume
-              </button>
+              <div className="pt-4 mt-2 border-t border-border/50">
+                <GradientButton 
+                  onClick={() => window.open('/Getachew_Ekubay_AI_Engineer_Resume.pdf', '_blank')}
+                  className="w-full justify-center"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Resume
+                </GradientButton>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </header>
   );
 }
