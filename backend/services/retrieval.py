@@ -29,27 +29,34 @@ _model_lock = threading.Lock()  # Thread safety for model loading
 # ─── Embedding Helpers 
 
 def _get_embed_model():
-    """Lazy-load the sentence-transformers model (thread-safe)."""
+    """Lazy-load the sentence-transformers model (thread-safe, optional)."""
     global _embed_model
     if _embed_model is None:
         with _model_lock:
-            # Double-check after acquiring lock
             if _embed_model is None:
-                from sentence_transformers import SentenceTransformer
-                _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
-                logger.info("Loaded sentence-transformers model: all-MiniLM-L6-v2")
-    return _embed_model
+                try:
+                    from sentence_transformers import SentenceTransformer
+                    _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+                    logger.info("Loaded sentence-transformers model: all-MiniLM-L6-v2")
+                except ImportError:
+                    logger.info("sentence-transformers not installed; relying on pre-computed embeddings and BM25")
+                    _embed_model = False
+    return _embed_model if _embed_model is not False else None
 
 
-def _embed_texts(texts: List[str]) -> np.ndarray:
-    """Embed a list of texts using sentence-transformers."""
+def _embed_texts(texts: List[str]) -> Optional[np.ndarray]:
+    """Embed a list of texts using sentence-transformers if available."""
     model = _get_embed_model()
+    if model is None:
+        return None
     return model.encode(texts, convert_to_numpy=True).astype(np.float32)
 
 
-def _embed_query(query: str) -> np.ndarray:
-    """Embed a single query string."""
+def _embed_query(query: str) -> Optional[np.ndarray]:
+    """Embed a single query string if available."""
     model = _get_embed_model()
+    if model is None:
+        return None
     return model.encode(query, convert_to_numpy=True).astype(np.float32)
 
 
@@ -125,6 +132,8 @@ def _dense_retrieve(query: str, top_k: int = 10) -> List[tuple[int, float]]:
 
     try:
         query_emb = _embed_query(query)
+        if query_emb is None:
+            return []
     except Exception as e:
         logger.error("Query embedding failed: %s", e)
         return []
