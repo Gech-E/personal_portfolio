@@ -13,9 +13,6 @@ import { ScrollToTop } from "./components/ui/ScrollToTop";
 const EducationSection = lazy(() =>
   import("./components/EducationSection").then((m) => ({ default: m.EducationSection }))
 );
-const AchievementsSection = lazy(() =>
-  import("./components/AchievementsSection").then((m) => ({ default: m.AchievementsSection }))
-);
 const ResumeSection = lazy(() =>
   import("./components/ResumeSection").then((m) => ({ default: m.ResumeSection }))
 );
@@ -48,7 +45,6 @@ export default function App() {
         
         <Suspense fallback={<div className="py-12 flex justify-center text-muted-foreground text-sm" />}>
           <EducationSection />
-          <AchievementsSection />
           <ResumeSection />
           <ContactSection />
         </Suspense>
