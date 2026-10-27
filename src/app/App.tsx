@@ -16,9 +16,6 @@ const EducationSection = lazy(() =>
 const AchievementsSection = lazy(() =>
   import("./components/AchievementsSection").then((m) => ({ default: m.AchievementsSection }))
 );
-const BlogSection = lazy(() =>
-  import("./components/BlogSection").then((m) => ({ default: m.BlogSection }))
-);
 const ResumeSection = lazy(() =>
   import("./components/ResumeSection").then((m) => ({ default: m.ResumeSection }))
 );
@@ -52,7 +49,6 @@ export default function App() {
         <Suspense fallback={<div className="py-12 flex justify-center text-muted-foreground text-sm" />}>
           <EducationSection />
           <AchievementsSection />
-          <BlogSection />
           <ResumeSection />
           <ContactSection />
         </Suspense>
