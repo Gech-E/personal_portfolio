@@ -12,7 +12,6 @@ const SECTION_IDS = [
   "education",
   "projects",
   "achievements",
-  "blog",
   "contact",
 ];
 
@@ -50,7 +49,7 @@ export function Navbar() {
     { name: "About", id: "about" },
     { name: "Experience", id: "experience" },
     { name: "Projects", id: "projects" },
-    { name: "Blog", id: "blog" },
+    { name: "Skills", id: "skills" },
     { name: "Contact", id: "contact" },
   ];
 
