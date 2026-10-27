@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-27",
+  "updated": "2026-10-28",
   "description": "Public, curated evidence for the portfolio chatbot. Project entries link to GitHub; experience is summarized from the public CV.",
   "chunks": [
     {
@@ -38,9 +38,9 @@
     {
       "id": "experience-march",
       "category": "experience",
-      "title": "MARCH Research Center — ML work",
-      "content": "Lead Machine Learning Engineer at MARCH Research Center, Ayder Referral Hospital (February–May 2026). Worked on an AI clinical decision-support workflow and interpretable biomedical ML pipelines in collaboration with clinicians. The portfolio does not publish patient data or clinical validation metrics.",
-      "keywords": "march research center ayder clinical neonatal hospital professional experience job work medical",
+      "title": "MARCH AI (Ayder) — Lead Machine Learning Engineer",
+      "content": "Lead Machine Learning Engineer at MARCH AI, Ayder Referral Hospital (February–May 2026). Worked on clinical decision-support research and interpretable biomedical machine learning workflows in collaboration with healthcare professionals. The portfolio does not claim clinical validation metrics.",
+      "keywords": "march research center ayder clinical neonatal hospital professional experience job work medical march ai lead engineer",
       "url": "https://getachewekubay.vercel.app/Getachew_Ekubay_AI_Engineer_Resume.pdf"
     },
     {
@@ -63,7 +63,7 @@
       "id": "experience-qubos",
       "category": "experience",
       "title": "QUBOS LLC — IT support",
-      "content": "IT Support Specialist (freelance, remote) at QUBOS LLC (July–September 2026). Troubleshot hardware, software, and system issues and communicated solutions to non-technical users.",
+      "content": "IT Support Specialist at QUBOS LLC (June–September 2026), remote. Troubleshot software, hardware and systems, and communicated solutions to users.",
       "keywords": "qubos support experience customer service it support troubleshooting remote company",
       "url": "https://getachewekubay.vercel.app/Getachew_Ekubay_AI_Engineer_Resume.pdf"
     },
