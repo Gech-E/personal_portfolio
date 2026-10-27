@@ -6,6 +6,7 @@ import logging
 from typing import List
 
 from fastapi import APIRouter, HTTPException
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, field_validator
 
 from db.connection import get_db, is_available as db_available
@@ -133,7 +134,8 @@ async def chat(req: ChatRequest):
         )
 
     # Save user message (non-blocking, won't fail the request)
-    _save_chat_async(req.session_id, "user", user_query)
+    # Offload blocking database operations to avoid stalling the async event loop.
+    await run_in_threadpool(_save_chat_async, req.session_id, "user", user_query)
 
     # Build message history for the pipeline
     message_history = [
@@ -143,10 +145,8 @@ async def chat(req: ChatRequest):
 
     # Run the RAG pipeline
     try:
-        result = process_query(
-            query=user_query,
-            message_history=message_history,
-        )
+        # The Groq/OpenAI client is synchronous; run it in a worker thread.
+        result = await run_in_threadpool(process_query, query=user_query, message_history=message_history)
     except Exception as e:
         logger.error("RAG pipeline error: %s", e, exc_info=True)
         raise HTTPException(
@@ -156,7 +156,7 @@ async def chat(req: ChatRequest):
 
     # Save assistant response (non-blocking)
     if result.reply:
-        _save_chat_async(req.session_id, "assistant", result.reply)
+        await run_in_threadpool(_save_chat_async, req.session_id, "assistant", result.reply)
 
     return ChatResponse(
         reply=result.reply,
