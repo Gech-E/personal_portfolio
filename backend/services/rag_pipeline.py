@@ -63,8 +63,13 @@ def process_query(query: str, message_history: Optional[List[dict]] = None) -> R
         return RAGResult(NO_EVIDENCE, mode="no_match")
     lookup = retrieval_query(query, message_history)
     intent, confidence = classify_intent(query)
-    if intent == "unknown" and lookup != query:
-        intent, confidence = classify_intent(lookup)
+    if lookup != query:
+        # Follow-up may ask about skills *of a prior project*; preserve the referent.
+        previous_intent, previous_confidence = classify_intent(lookup)
+        if previous_intent in ("projects", "experience", "education"):
+            intent, confidence = previous_intent, max(confidence, previous_confidence)
+        elif intent == "unknown":
+            intent, confidence = previous_intent, previous_confidence
     chosen_intent = intent if intent != "unknown" else None
     ranked = []
     if pinecone_configured():
