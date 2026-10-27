@@ -32,7 +32,6 @@ export function SkillsSection() {
                   <SkillBadge 
                     key={skill.name} 
                     name={skill.name} 
-                    icon={<skill.icon size={16} />} 
                   />
                 ))}
               </div>
