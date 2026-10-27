@@ -49,6 +49,7 @@ export function ProjectsSection() {
               <div className="pt-4 border-t border-border flex flex-wrap items-center gap-5">
                 <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-blue-600"><Github size={16}/> Code <ArrowUpRight size={13}/></a>
                 {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">Demo <ArrowUpRight size={15}/></a>}
+                {project.referenceUrl && <a href={project.referenceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">E-commerce reference <ArrowUpRight size={15}/></a>}
               </div>
             </article>
           ))}
