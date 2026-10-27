@@ -47,18 +47,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('motion')) {
-              return 'vendor-motion';
-            }
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons';
-            }
-            return 'vendor';
-          }
+          const normalized = id.replace(/\\\\/g, '/');
+          if (!normalized.includes('/node_modules/')) return;
+          // Exact package prefixes: matching every path containing "react"
+          // accidentally bundled react-icons and other large libraries with React.
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(normalized)) return 'vendor-react';
+          if (normalized.includes('/node_modules/motion/')) return 'vendor-motion';
+          // Allow Rollup to split remaining dependencies by actual usage.
+
         },
       },
     },
