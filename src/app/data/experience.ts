@@ -11,6 +11,32 @@ export interface Experience {
 
 export const experienceData: Experience[] = [
   {
+    id: "march-ai",
+    role: "Lead Machine Learning Engineer",
+    company: "MARCH AI (Ayder Referral Hospital)",
+    startDate: "Feb 2026",
+    endDate: "May 2026",
+    location: "Mekelle, Ethiopia",
+    description: [
+      "Worked on machine learning research for clinical decision-support workflows in collaboration with healthcare professionals.",
+      "Developed and explored interpretable biomedical ML pipelines, with attention to data preparation and model evaluation."
+    ],
+    technologies: ["Python", "Machine Learning", "Healthcare AI", "Model Interpretability"]
+  },
+  {
+    id: "qubos-llc",
+    role: "IT Support Specialist",
+    company: "QUBOS LLC",
+    startDate: "Jun 2026",
+    endDate: "Sep 2026",
+    location: "Remote",
+    description: [
+      "Troubleshot software, hardware, and system issues and supported users remotely.",
+      "Explained technical resolutions clearly to nontechnical users and helped maintain reliable day-to-day IT workflows."
+    ],
+    technologies: ["IT Support", "Troubleshooting", "Technical Support", "Remote Support"]
+  },
+  {
     id: "memi-trading",
     role: "AI/ML Intern",
     company: "Memi Trading PLC",
