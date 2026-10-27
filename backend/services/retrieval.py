@@ -9,7 +9,7 @@ RESUME_CHUNKS = [
     {**c, "subcategory": c["title"], "keywords": c["keywords"].split()}
     for c in _DATA["chunks"]
 ]
-STOP = set("a an the is are was were what who how where when can does did he his him she her i you me my about please tell show give list of on in at for to with and or from into have has do some more project projects getachew ekubay".split())
+STOP = set("a an the is are was were what who how where when can does did he his him she her i you me my about please tell show give list of on in at for to with and or from into have has do some more getachew ekubay".split())
 ALIASES={"rag":"retrieval augmented generation","llm":"large language model","cv":"computer vision","ml":"machine learning","ai":"artificial intelligence","job":"experience","work":"experience","school":"education","gpa":"cgpa","code":"github","repo":"github","repository":"github","teacher":"instructor"}
 def tokens(text):
     words=re.findall(r"[a-z0-9]+(?:[.+#-][a-z0-9]+)*",text.lower())
