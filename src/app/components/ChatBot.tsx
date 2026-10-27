@@ -1,4 +1,4 @@
-import { MessageCircle, X, Send, RotateCcw } from "lucide-react";
+import { MessageCircle, X, Send } from "lucide-react";
 import { useChatBot, SUGGESTED_QUESTIONS } from "../../hooks/useChatBot";
 
 function Answer({ content }: { content: string }) {
@@ -15,7 +15,7 @@ export function ChatBot({ startOpen = false }: { startOpen?: boolean }) {
       </header>
       <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4" role="log" aria-live="polite" aria-relevant="additions text">
         {messages.map(m=><div key={m.id} className={`flex ${m.role==="user"?"justify-end":"justify-start"}`}>
-          <div className={`max-w-[90%] rounded-2xl p-3 text-sm ${m.role==="user"?"bg-blue-600 text-white rounded-br-sm":m.isError?"bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-foreground":"bg-card border border-border text-foreground rounded-bl-sm"}`}><Answer content={m.content}/></div>
+          <div className={`max-w-[90%] rounded-2xl p-3 text-sm ${m.role==="user"?"bg-blue-600 text-white rounded-br-sm":m.isError?"bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-foreground":"bg-card border border-border text-foreground rounded-bl-sm"}`}><Answer content={m.content}/>{m.citations?.length ? <div className="border-t border-border mt-3 pt-2 flex flex-wrap gap-2" aria-label="Sources">{m.citations.map(c=><a key={c.id} href={c.url} target="_blank" rel="noopener noreferrer" className="text-xs underline text-blue-600 dark:text-blue-400">{c.title}</a>)}</div> : null}</div>
         </div>)}
         {isTyping && <p role="status" className="text-sm text-muted-foreground">Finding relevant information…</p>}
         <div ref={messagesEndRef}/>
