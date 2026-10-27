@@ -5,7 +5,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { portfolioAPI, APIError } from "@/lib/api";
-import { generateLocalResponse } from "@/lib/chatbot/fallback";
 import { playNotificationSound } from "@/lib/utils/audio";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -15,7 +14,9 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  isError?: boolean;  // Flag for error messages (styled differently in UI)
+  isError?: boolean;
+  citations?: {id: string; title: string; url: string}[];
+  mode?: string;  // Flag for error messages (styled differently in UI)
 }
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -98,6 +99,8 @@ export function useChatBot(initialOpen = false) {
 
     let responseText: string;
     let isError = false;
+    let citations: {id: string; title: string; url: string}[] = [];
+    let mode = "generated";
 
     // Manage session persistence
     const sessionId =
@@ -116,23 +119,23 @@ export function useChatBot(initialOpen = false) {
         messages: apiMessages,
       });
       responseText = data.reply;
-      if (data.sources?.length && !data.reply.includes("Source:")) {
-        responseText += "\n\nSources: " + data.sources.slice(0, 3).join(" · ");
-      }
+      citations = (data.citations || []).filter(c => /^https:\/\//.test(c.url)).slice(0, 4);
+      mode = data.mode || "generated";
     } catch (err) {
       console.error("Chat API error:", err);
 
+      mode = "unavailable";
       // Provide specific error feedback based on error type
       if (err instanceof APIError) {
         if (err.status === 429) {
           responseText = "⏳ You're sending messages too quickly. Please wait a moment and try again.";
           isError = true;
         } else {
-          responseText = "The live AI service is temporarily unavailable. Here is an answer from the portfolio’s local published information (not a live Groq response):\\n\\n" + generateLocalResponse(msg);
+          responseText = "The AI assistant is temporarily unavailable. Please try again shortly.";
           isError = true;
         }
       } else {
-        responseText = "The live AI service is temporarily unavailable. Here is an answer from locally available portfolio information (not a live Groq response):\\n\\n" + generateLocalResponse(msg);
+        responseText = "The AI assistant is temporarily unavailable. Please try again shortly.";
         isError = true;
       }
     } finally {
@@ -145,6 +148,8 @@ export function useChatBot(initialOpen = false) {
       content: responseText,
       timestamp: new Date(),
       isError,
+      citations,
+      mode,
     };
     setMessages((prev) => [...prev, assistantMsg]);
     setIsTyping(false);
