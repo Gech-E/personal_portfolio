@@ -1,43 +1,52 @@
 /**
- * Professional references identified by the portfolio owner.
- * No fabricated direct testimonials: Dr. Assefa and Dr. Sisay have
- * not supplied attributed statements. The submitted Halefom certificate
- * displays a future date (2026-12-03), so it is labeled as unverified.
+ * Professional recognition and reference details provided by portfolio owner.
+ * Only the certificate contains source text. The two researcher profiles are
+ * not quotations or verified endorsements.
  */
-export interface ProfessionalContact {
+export interface ProfessionalReference {
   id: string;
   name: string;
-  title: string;
+  role: string;
   organization: string;
   initials: string;
-  recognition?: string;
-  evidenceNote?: string;
+  context: string;
+  sourceType: "certificate" | "professional-contact";
+  certificateExcerpt?: string;
+  documentStatus?: string;
 }
 
-export const professionalContacts: ProfessionalContact[] = [
+export const testimonialsData: ProfessionalReference[] = [
   {
     id: "halefom-hailu",
     name: "Halefom Hailu Berhe",
-    title: "Founder & CEO",
+    role: "Founder & CEO",
     organization: "Memi Trading PLC",
     initials: "HH",
-    recognition:
-      "The submitted Certificate of Contribution describes Getachew's work coordinating AI/ML interns and preparing Zemen Bazaar vendor-recommendation data through collection, cleaning, preprocessing, and feature engineering.",
-    evidenceNote:
-      "Certificate image submitted by portfolio owner; dated December 3, 2026 (a future date). Issuance and endorsement are not independently verified.",
+    sourceType: "certificate",
+    certificateExcerpt: "In recognition of your distinguished Contribution",
+    context:
+      "A submitted Memi Trading Certificate of Contribution credits Getachew's team leadership, coordination of AI/ML interns, and work on Zemen Bazaar's vendor recommendation project—including vendor/user data collection, data cleaning, preprocessing, and feature engineering.",
+    documentStatus:
+      "Source: owner-submitted certificate bearing Halefom Hailu Berhe's name and signature. The document is dated December 3, 2026, which is after the current date; issuance and endorsement remain unverified.",
   },
   {
     id: "dr-assefa",
     name: "Dr. Assefa",
-    title: "AI/ML Researcher",
+    role: "AI/ML Researcher",
     organization: "Memi Trading PLC",
     initials: "DA",
+    sourceType: "professional-contact",
+    context:
+      "Listed by Getachew as an AI/ML research professional at Memi Trading PLC. A personal testimonial statement has not yet been provided or approved.",
   },
   {
     id: "dr-sisay",
     name: "Dr. Sisay",
-    title: "Cybersecurity Researcher & CTO",
+    role: "Cybersecurity Researcher & CTO",
     organization: "Memi Trading PLC",
     initials: "DS",
+    sourceType: "professional-contact",
+    context:
+      "Listed by Getachew as a cybersecurity researcher and technical leader at Memi Trading PLC. A personal testimonial statement has not yet been provided or approved.",
   },
 ];
