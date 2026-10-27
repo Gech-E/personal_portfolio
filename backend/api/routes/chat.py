@@ -87,6 +87,8 @@ class ChatResponse(BaseModel):
     sources: List[str]
     intent: str
     confidence: float
+    mode: str = "generated"
+    citations: List[dict] = []
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -163,6 +165,8 @@ async def chat(req: ChatRequest):
         sources=result.sources,
         intent=result.intent,
         confidence=result.confidence,
+        mode=result.mode,
+        citations=result.citations,
     )
 
 
