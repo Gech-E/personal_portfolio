@@ -13,11 +13,14 @@ def tokens(text):
     return {ALIASES.get(w,w) for w in words if w not in STOP and len(w)>1}
 def retrieve(query, intent=None, top_k=5):
     q=tokens(query)
+    if intent=="contact" and any(t in query.lower() for t in ("where", "live", "based", "reside", "location")):
+        q |= {"location", "based"}
+    if intent=="summary":q |= {"professional", "overview"}
     if not q:return []
     ranked=[]
     for c in RESUME_CHUNKS:
         # Protect explicit contact and education intents from unrelated project matches.
-        if intent in ("contact", "education") and c["category"] != intent:continue
+        if intent in ("contact", "education", "experience", "skills") and c["category"] != intent:continue
         title=tokens(c["title"]); keywords=tokens(" ".join(c["keywords"])); body=tokens(c["content"])
         common=q & (title|keywords|body)
         if not common:continue
