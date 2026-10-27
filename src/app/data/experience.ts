@@ -14,15 +14,15 @@ export const experienceData: Experience[] = [
     id: "memi-trading",
     role: "AI/ML Intern",
     company: "Memi Trading PLC",
-    startDate: "Oct 2025",
-    endDate: "Jan 2026",
+    startDate: "Jun 2025",
+    endDate: "Oct 2025",
     location: "Addis Ababa, Ethiopia",
     description: [
-      "Developed a custom Vision-Based Anomaly Detection model leveraging Self-Supervised Contrastive Learning (SimCLR).",
-      "Achieved a 95% true positive rate in defect identification without requiring extensive labeled datasets.",
-      "Engineered an automated data pipeline using FastAPI and deployed the model endpoint."
+      "Built a vendor recommendation system to support supplier matching and ranking with machine learning.",
+      "Prepared procurement data, engineered relevant features, and developed recommendation logic with Python.",
+      "Collaborated on API workflows, testing, iteration, and code reviews."
     ],
-    technologies: ["PyTorch", "OpenCV", "Python", "FastAPI", "React"]
+    technologies: ["Python", "scikit-learn", "FastAPI", "Recommendation Systems"]
   },
   {
     id: "gemed-solutions",
