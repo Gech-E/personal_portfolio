@@ -47,7 +47,7 @@
       "id": "experience-memi",
       "category": "experience",
       "title": "Memi Trading — AI/ML internship",
-      "content": "Junior AI/ML Engineer Intern at Memi Trading PLC (June–October 2025). Worked on a supplier/vendor recommendation workflow using feature engineering and ranking; supported code reviews and iterative development.",
+      "content": "AI/ML Intern at Memi Trading PLC (June–October 2025). Worked on supplier and vendor recommendation with Python, feature engineering, ranking logic, and software collaboration.",
       "keywords": "memi internship job work engineering enterprise supplier procurement",
       "url": "https://getachewekubay.vercel.app/Getachew_Ekubay_AI_Engineer_Resume.pdf"
     },
@@ -119,8 +119,8 @@
       "id": "project-vendor-recommendation",
       "category": "projects",
       "title": "Vendor Recommendation System",
-      "content": "Vendor Recommendation System (AI & ML): Hybrid recommendation approach combining collaborative and content-based filtering for vendor and product matching. Technologies: Python, scikit-learn, FastAPI. GitHub: https://github.com/Gech-E/Vendor_recommendation_system.",
-      "keywords": "vendor recommendation system vendor recommendation system ai & ml python scikit-learn fastapi",
+      "content": "Vendor Recommendation System (AI & ML): Hybrid recommendation approach combining collaborative and content-based filtering for vendor and product matching. Technologies: Python, scikit-learn, FastAPI. GitHub: https://github.com/Gech-E/Vendor_recommendation_system. Zemen Bazaar (https://zemenbazaar.com/) is the intended e-commerce use-case reference; an integration with the live store has not been verified.",
+      "keywords": "vendor recommendation system vendor recommendation system ai & ml python scikit-learn fastapi zemen bazaar ecommerce marketplace",
       "url": "https://github.com/Gech-E/Vendor_recommendation_system"
     },
     {
