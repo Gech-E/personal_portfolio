@@ -37,7 +37,7 @@ function renderContent(content: string) {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function ChatBot() {
+export function ChatBot({ startOpen = false }: { startOpen?: boolean }) {
   const {
     isOpen,
     setIsOpen,
@@ -49,7 +49,7 @@ export function ChatBot() {
     inputRef,
     handleSend,
     handleKeyDown,
-  } = useChatBot();
+  } = useChatBot(startOpen);
 
   return (
     <>
@@ -90,7 +90,7 @@ export function ChatBot() {
                   <h3 className="text-white font-semibold text-sm">RAG Assistant</h3>
                   <p className="text-blue-400 flex items-center gap-1 text-[11px]">
                     <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
-                    Powered by resume knowledge base
+                    Answers based on portfolio sources
                   </p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function ChatBot() {
                 </button>
               </div>
               <p className="text-center text-slate-400 mt-2 text-[10px]">
-                RAG-powered · Backend + client-side fallback
+                Answers based on public portfolio information
               </p>
             </div>
           </motion.div>
