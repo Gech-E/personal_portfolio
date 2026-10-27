@@ -1,10 +1,11 @@
 """RAG orchestration: source-aware retrieval and grounded generation."""
 import logging
 import os
+import re
 from dataclasses import dataclass
 from typing import List, Optional
 from openai import OpenAI
-from services.retrieval import retrieve
+from services.retrieval import RESUME_CHUNKS, retrieve
 from services.intent_classifier import classify_intent
 
 logger=logging.getLogger("portfolio.rag")
@@ -36,6 +37,36 @@ def client():
         base="https://generativelanguage.googleapis.com/v1beta/openai/" if provider=="gemini" else "https://api.groq.com/openai/v1"
         _client=OpenAI(api_key=key,base_url=base,timeout=12,max_retries=0)
     return _client
+
+def location_question(query: str) -> bool:
+    """Match questions about Getachew's public location, not live project demos."""
+    q = re.sub(r"[^a-z0-9 ]+", " ", query.lower())
+    if not re.search(r"\b(he|his|getachew|ekubay)\b", q):
+        return False
+    terms = r"\b(live|lives|living|reside|resides|residing|stay|stays|based|located|location|address|residence|city|country|home)\b"
+    return (
+        bool(re.search(terms, q))
+        and bool(re.search(r"\b(where|what|which|location|address|city|country|home)\b", q))
+    ) or bool(re.search(r"\bwhere\s+(?:is|was|does)\s+(?:he|getachew)\s+from\b", q))
+
+
+def location_result(query: str) -> RAGResult:
+    """Use published city data only, never infer a private street address."""
+    contact = next((c for c in RESUME_CHUNKS if c.get("id") == "contact"), None)
+    if not contact:
+        return RAGResult(NO_CONTEXT, [], "contact", 0.0)
+    match = re.search(r"Location:\s*([^\n.]+)", contact.get("content", ""), re.I)
+    if not match:
+        return RAGResult(NO_CONTEXT, [], "contact", 0.0)
+    city = match.group(1).strip(" ,;")
+    sources = [contact["url"]] if contact.get("url") else []
+    if re.search(r"\bwhere\s+(?:is|was|does)\s+(?:he|getachew)\s+from\b", query.lower()):
+        reply = f"Getachew's portfolio lists him as based in {city}; it does not specify his hometown or birthplace."
+    else:
+        reply = f"Getachew Ekubay is based in {city}. His exact residential address is not publicly listed."
+    return RAGResult(reply, sources, "contact", 1.0)
+
+
 def process_query(query:str,message_history:Optional[List[dict]]=None)->RAGResult:
     intent,confidence=classify_intent(query)
     q=query.strip().lower()
@@ -43,6 +74,7 @@ def process_query(query:str,message_history:Optional[List[dict]]=None)->RAGResul
         return RAGResult("Hi! I'm Getachew's portfolio assistant. Ask about his GitHub projects, skills, work experience, or education.",[],"greeting",1.0)
     if q in ("thanks","thank you","thank you!"):
         return RAGResult("You're welcome! Feel free to explore the projects or reach out to Getachew.",[],"thanks",1.0)
+    if location_question(query):return location_result(query)
     if intent=="personal":return RAGResult(NO_CONTEXT,[],"personal",confidence)
     if any(k in q for k in ("who is getachew","tell me about getachew","introduce getachew","who are you")):
         intent="summary"
@@ -59,7 +91,7 @@ def process_query(query:str,message_history:Optional[List[dict]]=None)->RAGResul
     if chunks[0][1]<0.35:return RAGResult(NO_CONTEXT,[],intent,0.0)
     sources=list(dict.fromkeys(c.get("url","") for c,_ in chunks if c.get("url")))
     context="\n\n".join("[{}] {}\nSource: {}\n{}".format(i+1,c["title"],c.get("url",""),c["content"]) for i,(c,_) in enumerate(chunks))
-    fallback="\n\n".join(f'{c["title"]}: {c["content"]}\nSource: {c.get("url","")}' for c,_ in chunks[:2])
+    fallback="\n\n".join(c["content"] for c,_ in chunks[:2])
     c=client()
     if c:
         try:

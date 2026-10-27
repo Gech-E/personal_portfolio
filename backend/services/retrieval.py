@@ -16,6 +16,8 @@ def retrieve(query, intent=None, top_k=5):
     if not q:return []
     ranked=[]
     for c in RESUME_CHUNKS:
+        # Protect explicit contact and education intents from unrelated project matches.
+        if intent in ("contact", "education") and c["category"] != intent:continue
         title=tokens(c["title"]); keywords=tokens(" ".join(c["keywords"])); body=tokens(c["content"])
         common=q & (title|keywords|body)
         if not common:continue

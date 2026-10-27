@@ -43,7 +43,7 @@ INTENT_PATTERNS: dict[str, list[tuple[str, int]]] = {
     ],
     "contact": [
         ("contact", 10), ("email", 10), ("phone", 10), ("reach", 8),
-        ("hire", 8), ("location", 10), ("where", 7), ("live", 8),
+        ("hire", 8), ("location", 10), ("based in", 8), ("reside", 8),
         ("address", 10), ("github", 8), ("linkedin", 8),
         ("website", 6), ("portfolio site", 8), ("connect", 6), ("call", 7),
     ],

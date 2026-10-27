@@ -12,6 +12,10 @@ const evidence:Entry[]=[
 ];
 export function generateLocalResponse(query:string):string {
 const q=query.trim().toLowerCase();
+if (/\b(he|his|getachew|ekubay)\b/.test(q) && ((/\b(where|what|which|location|address|city|country|home)\b/.test(q) && /\b(live|lives|living|reside|resides|based|located|location|address|city|country|home)\b/.test(q)) || /\bwhere\s+(?:is|was|does)\s+(?:he|getachew)\s+from\b/.test(q))) {
+  return "Getachew Ekubay is based in Addis Ababa, Ethiopia. His exact residential address is not publicly listed.";
+}
+
 if(/^(hi|hello|hey)\b/.test(q))return "Hello! Ask me about Getachew's skills, projects, education or contact information.";
 if(/^(thanks|thank you)\b/.test(q))return "You're welcome!";
 const qwords=words(q);if(!qwords.size)return "Please ask about a project, skill, education or contact details.";
