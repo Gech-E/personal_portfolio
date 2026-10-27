@@ -29,9 +29,9 @@ class RAGResult:
 _client=None
 def client():
     global _client
-    key=os.getenv("GEMINI_API_KEY") or os.getenv("GROQ_API_KEY")
+    key=os.getenv("GROQ_API_KEY") or os.getenv("GEMINI_API_KEY")
     if not key:return None
-    provider="gemini" if os.getenv("GEMINI_API_KEY") else "groq"
+    provider="groq" if os.getenv("GROQ_API_KEY") else "gemini"
     if _client is None:
         base="https://generativelanguage.googleapis.com/v1beta/openai/" if provider=="gemini" else "https://api.groq.com/openai/v1"
         _client=OpenAI(api_key=key,base_url=base,timeout=12,max_retries=0)
@@ -63,7 +63,7 @@ def process_query(query:str,message_history:Optional[List[dict]]=None)->RAGResul
     c=client()
     if c:
         try:
-            model=(os.getenv("GEMINI_MODEL","gemini-2.5-flash-lite") if os.getenv("GEMINI_API_KEY") else os.getenv("GROQ_MODEL","llama-3.3-70b-versatile"))
+            model=(os.getenv("GROQ_MODEL","llama-3.3-70b-versatile") if os.getenv("GROQ_API_KEY") else os.getenv("GEMINI_MODEL","gemini-2.5-flash-lite"))
             msgs=[{"role":"system","content":SYSTEM.format(context=context)}]
             for m in (message_history or [])[-6:-1]:
                 if m.get("role") in ("user","assistant") and m.get("content"):
