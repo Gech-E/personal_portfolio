@@ -12,6 +12,7 @@ export interface Project {
   tags: string[];
   githubUrl: string;
   liveUrl?: string;
+  referenceUrl?: string;
   featured?: boolean;
 }
 
@@ -62,13 +63,14 @@ const projects: Project[] = [
     "id": "vendor-recommendation",
     "title": "Vendor Recommendation System",
     "category": "AI & ML",
-    "desc": "Hybrid recommendation approach combining collaborative and content-based filtering for vendor and product matching.",
+    "desc": "Hybrid vendor/product recommendation system using collaborative and content-based filtering. Zemen Bazaar is the proposed e-commerce application context; integration with its live platform is not yet verified.",
     "tags": [
       "Python",
       "scikit-learn",
       "FastAPI"
     ],
     "githubUrl": "https://github.com/Gech-E/Vendor_recommendation_system",
+    "referenceUrl": "https://zemenbazaar.com/",
     "featured": true
   },
   {
