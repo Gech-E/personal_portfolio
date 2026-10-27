@@ -1,4 +1,5 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
+import { MessageCircle } from "lucide-react";
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
@@ -32,6 +33,7 @@ const ChatBot = lazy(() =>
 );
 
 export default function App() {
+  const [chatRequested, setChatRequested] = useState(false);
   return (
     <div className="min-h-screen overflow-x-hidden font-sans bg-background text-foreground selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-100 transition-colors duration-300">
       {/* Skip to Content for Screen Readers & Keyboard Accessibility */}
@@ -61,9 +63,11 @@ export default function App() {
       </main>
       <Footer />
       
-      <Suspense fallback={null}>
-        <ChatBot />
-      </Suspense>
+      {chatRequested ? (
+        <Suspense fallback={null}><ChatBot startOpen /></Suspense>
+      ) : (
+        <button type="button" aria-label="Open AI portfolio assistant" onClick={() => setChatRequested(true)} className="fixed bottom-6 right-6 z-[9999] w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"><MessageCircle size={24} /></button>
+      )}
       <ScrollToTop />
     </div>
   );
