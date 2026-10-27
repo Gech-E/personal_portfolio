@@ -127,14 +127,13 @@ export function useChatBot(initialOpen = false) {
         if (err.status === 429) {
           responseText = "⏳ You're sending messages too quickly. Please wait a moment and try again.";
           isError = true;
-        } else if (err.status === 0) {
-          // Timeout or network error — use local fallback
-          responseText = generateLocalResponse(msg);
         } else {
-          responseText = generateLocalResponse(msg);
+          responseText = "The live AI service is temporarily unavailable. Here is an answer from the portfolio’s local published information (not a live Groq response):\\n\\n" + generateLocalResponse(msg);
+          isError = true;
         }
       } else {
-        responseText = generateLocalResponse(msg);
+        responseText = "The live AI service is temporarily unavailable. Here is an answer from locally available portfolio information (not a live Groq response):\\n\\n" + generateLocalResponse(msg);
+        isError = true;
       }
     } finally {
       sendingRef.current = false;
