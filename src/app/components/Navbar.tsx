@@ -12,7 +12,6 @@ const SECTION_IDS = [
   "education",
   "projects",
   "achievements",
-  "testimonials",
   "blog",
   "contact",
 ];
