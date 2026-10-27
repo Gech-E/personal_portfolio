@@ -41,8 +41,8 @@ export const SUGGESTED_QUESTIONS = [
 
 // ─── Hook ───────────────────────────────────────────────────────────────────
 
-export function useChatBot() {
-  const [isOpen, setIsOpen] = useState(false);
+export function useChatBot(initialOpen = false) {
+  const [isOpen, setIsOpen] = useState(initialOpen);
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -116,6 +116,9 @@ export function useChatBot() {
         messages: apiMessages,
       });
       responseText = data.reply;
+      if (data.sources?.length && !data.reply.includes("Source:")) {
+        responseText += "\\n\\nSources: " + data.sources.slice(0, 3).join(" · ");
+      }
     } catch (err) {
       console.error("Chat API error:", err);
 
