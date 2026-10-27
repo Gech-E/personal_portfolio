@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Moon, Sun, Download } from "lucide-react";
+import { Menu, X, Moon, Sun } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 import { useActiveSection } from "../../hooks/useActiveSection";
 import { GradientButton } from "./ui/GradientButton";
@@ -99,7 +99,6 @@ export function Navbar() {
               className="!py-2 !px-4 text-sm"
               aria-label="Download resume PDF"
             >
-              <Download className="w-4 h-4 mr-2" />
               Resume
             </GradientButton>
           </div>
@@ -145,7 +144,6 @@ export function Navbar() {
                   onClick={() => window.open('/Getachew_Ekubay_AI_Engineer_Resume.pdf', '_blank')}
                   className="w-full justify-center"
                 >
-                  <Download className="w-4 h-4 mr-2" />
                   Download Resume
                 </GradientButton>
               </div>
