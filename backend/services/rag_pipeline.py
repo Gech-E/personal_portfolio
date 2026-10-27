@@ -44,12 +44,16 @@ def process_query(query:str,message_history:Optional[List[dict]]=None)->RAGResul
     if q in ("thanks","thank you","thank you!"):
         return RAGResult("You're welcome! Feel free to explore the projects or reach out to Getachew.",[],"thanks",1.0)
     if intent=="personal":return RAGResult(NO_CONTEXT,[],"personal",confidence)
+    if any(k in q for k in ("who is getachew","tell me about getachew","introduce getachew","who are you")):
+        intent="summary"
     # Follow-up queries benefit from user context, but never treat assistant replies as verified knowledge.
     history=[m for m in (message_history or []) if m.get("role")=="user" and m.get("content")]
     lookup=query
     if len(query.split())<=5 and len(history)>1:
         lookup=" ".join([history[-2]["content"][:120],query])
     chunks=retrieve(lookup,intent=intent if intent!="unknown" else None,top_k=5)
+    if not chunks and intent=="summary":chunks=retrieve("professional overview background",intent="summary",top_k=3)
+    if not chunks and ("where" in q or "live" in q or "based" in q):chunks=retrieve("location Addis Ababa",intent="contact",top_k=3)
     if not chunks:return RAGResult(NO_CONTEXT,[],intent,0.0)
     # A minimum lexical confidence prevents unrelated documents from being used.
     if chunks[0][1]<0.35:return RAGResult(NO_CONTEXT,[],intent,0.0)
