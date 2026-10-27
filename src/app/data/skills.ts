@@ -1,29 +1,5 @@
-import {
-  SiPython, SiJavascript, SiTypescript, SiHtml5, SiCss, SiTailwindcss,
-  SiReact, SiNextdotjs, SiNodedotjs, SiExpress, SiNestjs, SiFastapi,
-  SiTensorflow, SiPytorch, SiScikitlearn,
-  SiGooglecloud, SiDocker, SiKubernetes,
-  SiPostgresql, SiMysql, SiMongodb, SiRedis,
-  SiGit, SiGithub, SiFigma, SiLinux
-} from 'react-icons/si';
-import { VscVscode, VscAzure } from 'react-icons/vsc';
-import { FaJava, FaAws } from 'react-icons/fa';
-import {
-  Brain,
-  Bot,
-  Eye,
-  Mic,
-  Workflow,
-  Sparkles,
-  MessageSquare,
-  Cpu,
-  Layers,
-  Network
-} from 'lucide-react';
-
 export interface Skill {
   name: string;
-  icon: any;
 }
 
 export interface SkillCategory {
@@ -35,68 +11,68 @@ export const skillCategories: SkillCategory[] = [
   {
     title: "AI & Machine Learning",
     skills: [
-      { name: "Machine Learning", icon: Brain },
-      { name: "PyTorch", icon: SiPytorch },
-      { name: "TensorFlow", icon: SiTensorflow },
-      { name: "RAG (Retrieval-Augmented Gen)", icon: Network },
-      { name: "AI Agents", icon: Bot },
-      { name: "LangChain", icon: Workflow },
-      { name: "Computer Vision", icon: Eye },
-      { name: "Natural Language Processing (NLP)", icon: Layers },
-      { name: "Speech Recognition", icon: Mic },
-      { name: "Recommendation Systems", icon: Sparkles },
-      { name: "Chatbots & Conversational AI", icon: MessageSquare }
+      { name: "Machine Learning" },
+      { name: "PyTorch" },
+      { name: "TensorFlow" },
+      { name: "RAG (Retrieval-Augmented Gen)" },
+      { name: "AI Agents" },
+      { name: "LangChain" },
+      { name: "Computer Vision" },
+      { name: "Natural Language Processing (NLP)" },
+      { name: "Speech Recognition" },
+      { name: "Recommendation Systems" },
+      { name: "Chatbots & Conversational AI" }
     ]
   },
   {
     title: "Backend Development",
     skills: [
-      { name: "FastAPI", icon: SiFastapi },
-      { name: "Node.js", icon: SiNodedotjs },
-      { name: "Express.js", icon: SiExpress },
-      { name: "Nest.js", icon: SiNestjs },
-      { name: "Python", icon: SiPython },
-      { name: "TypeScript", icon: SiTypescript }
+      { name: "FastAPI" },
+      { name: "Node.js" },
+      { name: "Express.js" },
+      { name: "Nest.js" },
+      { name: "Python" },
+      { name: "TypeScript" }
     ]
   },
   {
     title: "Frontend Development",
     skills: [
-      { name: "React", icon: SiReact },
-      { name: "Next.js", icon: SiNextdotjs },
-      { name: "Tailwind CSS", icon: SiTailwindcss },
-      { name: "TypeScript", icon: SiTypescript },
-      { name: "JavaScript", icon: SiJavascript },
-      { name: "HTML & CSS", icon: SiHtml5 }
+      { name: "React" },
+      { name: "Next.js" },
+      { name: "Tailwind CSS" },
+      { name: "TypeScript" },
+      { name: "JavaScript" },
+      { name: "HTML & CSS" }
     ]
   },
   {
     title: "Cloud & DevOps",
     skills: [
-      { name: "AWS", icon: FaAws },
-      { name: "Docker", icon: SiDocker },
-      { name: "Kubernetes", icon: SiKubernetes },
-      { name: "Google Cloud", icon: SiGooglecloud },
-      { name: "Azure", icon: VscAzure }
+      { name: "AWS" },
+      { name: "Docker" },
+      { name: "Kubernetes" },
+      { name: "Google Cloud" },
+      { name: "Azure" }
     ]
   },
   {
     title: "Databases & Caching",
     skills: [
-      { name: "PostgreSQL", icon: SiPostgresql },
-      { name: "MongoDB", icon: SiMongodb },
-      { name: "Redis", icon: SiRedis },
-      { name: "MySQL", icon: SiMysql }
+      { name: "PostgreSQL" },
+      { name: "MongoDB" },
+      { name: "Redis" },
+      { name: "MySQL" }
     ]
   },
   {
     title: "Developer Tools",
     skills: [
-      { name: "Git", icon: SiGit },
-      { name: "GitHub", icon: SiGithub },
-      { name: "VS Code", icon: VscVscode },
-      { name: "Linux", icon: SiLinux },
-      { name: "Figma", icon: SiFigma }
+      { name: "Git" },
+      { name: "GitHub" },
+      { name: "VS Code" },
+      { name: "Linux" },
+      { name: "Figma" }
     ]
   }
 ];
