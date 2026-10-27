@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Github, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import projects, { projectCategories } from "../data/projects";
 
 export function ProjectsSection() {
@@ -21,7 +21,7 @@ export function ProjectsSection() {
             <h2 id="projects-heading" className="text-3xl md:text-5xl font-bold tracking-tight text-foreground mb-3">Projects & experiments</h2>
             <p className="max-w-2xl text-muted-foreground">Explore {projects.length} public projects across AI, full-stack engineering, EdTech and more. Source links point directly to GitHub.</p>
           </div>
-          <a href="https://github.com/Gech-E?tab=repositories" target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">All GitHub repositories <ArrowUpRight size={16}/></a>
+          <a href="https://github.com/Gech-E?tab=repositories" target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">All GitHub repositories</a>
         </div>
         <div className="flex flex-col gap-4 mb-8">
           <div className="relative max-w-sm">
@@ -47,9 +47,9 @@ export function ProjectsSection() {
               <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-6">{project.desc}</p>
               <div className="flex flex-wrap gap-2 mb-5">{project.tags.map((tag)=><span key={tag} className="text-xs rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-1 text-slate-600 dark:text-slate-300">{tag}</span>)}</div>
               <div className="pt-4 border-t border-border flex flex-wrap items-center gap-5">
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-blue-600"><Github size={16}/> Code <ArrowUpRight size={13}/></a>
-                {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">Demo <ArrowUpRight size={15}/></a>}
-                {project.referenceUrl && <a href={project.referenceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">E-commerce reference <ArrowUpRight size={15}/></a>}
+                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-blue-600">Source code</a>
+                {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">Live demo</a>}
+                {project.referenceUrl && <a href={project.referenceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">E-commerce reference</a>}
               </div>
             </article>
           ))}
