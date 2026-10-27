@@ -117,7 +117,7 @@ export function useChatBot(initialOpen = false) {
       });
       responseText = data.reply;
       if (data.sources?.length && !data.reply.includes("Source:")) {
-        responseText += "\\n\\nSources: " + data.sources.slice(0, 3).join(" · ");
+        responseText += "\n\nSources: " + data.sources.slice(0, 3).join(" · ");
       }
     } catch (err) {
       console.error("Chat API error:", err);
