@@ -53,6 +53,8 @@ export interface ChatResponse {
   sources: string[];
   intent?: string;
   confidence?: number;
+  mode?: "generated" | "no_match";
+  citations?: {id: string; title: string; url: string}[];
 }
 
 // ─── Error Types ─────────────────────────────────────────────────────
