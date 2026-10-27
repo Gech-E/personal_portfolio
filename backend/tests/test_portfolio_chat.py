@@ -1,43 +1,60 @@
-"""Regression tests: protect public location questions from vendor demo matches."""
+"""Unit tests for cited RAG generation, query routing, and fail-closed behavior."""
 import pathlib
 import sys
 import unittest
-from unittest.mock import patch
-
+from unittest.mock import patch, MagicMock
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
-
-from services.rag_pipeline import location_question, process_query
+from services.rag_pipeline import process_query, RAGUnavailable, retrieval_query
 from services.retrieval import retrieve
+from services.intent_classifier import classify_intent
 
+class PortfolioRAGTests(unittest.TestCase):
+    def test_location_routes_to_contact(self):
+        self.assertEqual(classify_intent("where does he live")[0], "contact")
+        results = retrieve("where does he live", intent="contact")
+        self.assertTrue(results)
+        self.assertEqual(results[0][0]["id"], "contact")
 
-class PortfolioChatTests(unittest.TestCase):
-    def test_location_phrasings(self):
-        for query in ["where does he live", "Where is Getachew based?", "What city does Getachew live in?", "Where is his location?", "What is his home address?"]:
-            with self.subTest(query=query):
-                self.assertTrue(location_question(query))
+    def test_named_project_is_retrieved(self):
+        self.assertEqual(retrieve("Vendor Recommendation System", intent="projects")[0][0]["id"], "project-vendor-recommendation")
 
-    def test_location_response_from_public_data(self):
-        for query in ["where does he live", "Where is Getachew based?", "What is his home address?"]:
-            with self.subTest(query=query):
-                result = process_query(query)
-                self.assertEqual(result.intent, "contact")
-                self.assertIn("Addis Ababa, Ethiopia", result.reply)
-                self.assertNotIn("Vendor Recommendation", result.reply)
-                self.assertIn("not publicly listed", result.reply)
+    def test_followup_reuses_last_user_query(self):
+        previous = [{"role": "user", "content": "Tell me about DevTrack"},
+                    {"role": "assistant", "content": "A claimed success."},
+                    {"role": "user", "content": "Which technologies does it use?"}]
+        lookup = retrieval_query("Which technologies does it use?", previous)
+        self.assertIn("DevTrack", lookup)
+        self.assertNotIn("claimed success", lookup)
 
-    def test_location_works_without_llm(self):
-        with patch("services.rag_pipeline.client", side_effect=AssertionError("LLM should not run")):
-            self.assertIn("Addis Ababa", process_query("where does he live").reply)
+    def test_no_source_returns_abstention(self):
+        response = process_query("quantum interstellar teleportation equipment")
+        self.assertEqual(response.mode, "no_match")
+        self.assertFalse(response.sources)
 
-    def test_project_question_still_retrieves_vendor_project(self):
-        result = retrieve("Vendor Recommendation System", intent="projects", top_k=3)
-        self.assertTrue(result)
-        self.assertEqual(result[0][0]["id"], "project-vendor-recommendation")
+    def test_unavailable_llm_does_not_fake_an_answer(self):
+        with patch("services.rag_pipeline.client", side_effect=RAGUnavailable("offline")):
+            with self.assertRaises(RAGUnavailable):
+                process_query("Tell me about DevTrack")
 
-    def test_contact_intent_never_returns_project(self):
-        result = retrieve("live", intent="contact", top_k=5)
-        self.assertFalse(any(c["category"] == "projects" for c, _ in result))
+    def test_valid_model_claim_has_validated_source(self):
+        completion = MagicMock()
+        completion.choices[0].message.content = '{"answer":"DevTrack is a project.","source_ids":["project-devtrack","invented-source"],"answerable":true}'
+        fake_client = MagicMock()
+        fake_client.chat.completions.create.return_value = completion
+        with patch("services.rag_pipeline.client", return_value=fake_client):
+            response = process_query("Tell me about DevTrack")
+        self.assertEqual(response.mode, "generated")
+        self.assertEqual([c["id"] for c in response.citations], ["project-devtrack"])
+        self.assertTrue(response.sources)
 
+    def test_unsupported_model_claim_abstains(self):
+        completion = MagicMock()
+        completion.choices[0].message.content = '{"answer":"Unsupported answer","source_ids":["fake"],"answerable":true}'
+        fake_client = MagicMock()
+        fake_client.chat.completions.create.return_value = completion
+        with patch("services.rag_pipeline.client", return_value=fake_client):
+            response = process_query("Tell me about DevTrack")
+        self.assertEqual(response.mode, "no_match")
 
 if __name__ == "__main__":
     unittest.main()
