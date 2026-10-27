@@ -29,19 +29,15 @@ def vector_search(query, intent=None, top_k=6):
     """Return only evidence entries identified by Pinecone, with similarity values."""
     if not configured():
         return []
-    from pinecone import DenseVectorQuery
     pc, index = _resources()
     vector = pc.inference.embed(
         model=EMBEDDING_MODEL,
         inputs=[query[:800]],
         parameters={"input_type": "query"},
     ).data[0].values
-    response = index.documents.search(
-        namespace=NAMESPACE,
-        top_k=min(20, max(top_k * 2, 10)),
-        score_by=[DenseVectorQuery(field="embedding", values=list(vector))],
-        include_fields=["category", "title"],
-        timeout=8,
+    response = index.query(
+        vector=list(vector), namespace=NAMESPACE,
+        top_k=min(20, max(top_k * 2, 10)), include_metadata=True,
     )
     ranked = []
     for item in response.matches:
