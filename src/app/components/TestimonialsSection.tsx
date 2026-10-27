@@ -1,41 +1,27 @@
-import { AnimatedSection } from "./ui/AnimatedSection";
-import { SectionHeader } from "./ui/SectionHeader";
-import { testimonialsData } from "../data/testimonials";
-import { Quote } from "lucide-react";
+import { professionalContacts } from "../data/testimonials";
 
 export function TestimonialsSection() {
   return (
-    <section id="testimonials" className="py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-6">
-        <SectionHeader 
-          title="What People Say" 
-          subtitle="Feedback from colleagues, managers, and collaborators."
-        />
-
-        <div className="grid md:grid-cols-3 gap-8 mt-16">
-          {testimonialsData.map((testimonial, idx) => (
-            <AnimatedSection 
-              key={testimonial.id} 
-              direction="up" 
-              delay={idx * 0.15}
-              className="glass-card p-8 rounded-3xl relative h-full flex flex-col"
-            >
-              <Quote className="absolute top-6 right-6 w-10 h-10 text-blue-500/10 dark:text-blue-400/10 rotate-180" />
-              
-              <div className="flex gap-4 items-center mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  {testimonial.avatarPlaceholder}
-                </div>
-                <div>
-                  <h4 className="font-bold text-foreground">{testimonial.name}</h4>
-                  <div className="text-xs font-medium text-blue-600 dark:text-blue-400">{testimonial.title}, {testimonial.company}</div>
-                </div>
+    <section id="testimonials" className="py-20 md:py-24 bg-background" aria-labelledby="references-heading">
+      <div className="max-w-6xl mx-auto px-6">
+        <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-3">PROFESSIONAL NETWORK</p>
+        <h2 id="references-heading" className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4">Professional References</h2>
+        <p className="text-muted-foreground max-w-2xl leading-relaxed mb-9">
+          Professional contacts identified by Getachew. Names and roles are shown for context; no endorsements or quotations are attributed to them.
+          References and contact details are available upon request.
+        </p>
+        <div className="grid gap-5 md:grid-cols-3">
+          {professionalContacts.map((person) => (
+            <article key={person.id} className="rounded-2xl border border-border bg-card p-6 flex gap-4 items-start">
+              <div aria-hidden="true" className="w-12 h-12 shrink-0 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 flex items-center justify-center font-semibold">
+                {person.initials}
               </div>
-              
-              <p className="text-muted-foreground text-sm leading-relaxed italic relative z-10 flex-grow">
-                "{testimonial.quote}"
-              </p>
-            </AnimatedSection>
+              <div className="min-w-0">
+                <h3 className="text-lg font-semibold text-foreground">{person.name}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{person.title}</p>
+                {person.organization && <p className="text-sm text-muted-foreground">{person.organization}</p>}
+              </div>
+            </article>
           ))}
         </div>
       </div>
