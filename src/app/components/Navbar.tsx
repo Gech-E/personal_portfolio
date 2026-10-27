@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Moon, Sun, Download } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "../../hooks/useTheme";
 import { useActiveSection } from "../../hooks/useActiveSection";
 import { GradientButton } from "./ui/GradientButton";
@@ -128,14 +127,8 @@ export function Navbar() {
       </div>
 
       {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden glass border-t border-border/50 mt-4 overflow-hidden"
-          >
+      {mobileMenuOpen && (
+          <div className="md:hidden glass border-t border-border/50 mt-4 overflow-hidden">
             <div className="flex flex-col px-6 py-4 gap-4">
               {navLinks.map((link) => (
                 <button
@@ -158,9 +151,8 @@ export function Navbar() {
                 </GradientButton>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+      )}
     </header>
   );
 }
