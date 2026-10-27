@@ -1,10 +1,7 @@
 """Curated portfolio knowledge with a lightweight, relevance-gated lexical index."""
-import json
 import re
-from pathlib import Path
+from services.curated_data import KNOWLEDGE as _DATA
 
-_PATH = Path(__file__).resolve().parents[2] / "public" / "portfolio-knowledge.json"
-_DATA = json.loads(_PATH.read_text(encoding="utf-8"))
 RESUME_CHUNKS = [
     {**c, "subcategory": c["title"], "keywords": c["keywords"].split()}
     for c in _DATA["chunks"]
