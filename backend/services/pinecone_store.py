@@ -22,7 +22,7 @@ def configured():
 def _resources():
     from pinecone import Pinecone
     pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"], timeout=8)
-    index = pc.index(os.environ["PINECONE_INDEX"])
+    index = pc.Index(os.environ["PINECONE_INDEX"])
     return pc, index
 
 def vector_search(query, intent=None, top_k=6):
