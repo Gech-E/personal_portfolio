@@ -29,7 +29,11 @@ function renderContent(content: string) {
     return part.split("\n").map((line, j) => (
       <span key={`${i}-${j}`}>
         {j > 0 && <br />}
-        {line}
+        {line.split(/(https?:\/\/[^\s]+)/g).map((segment, k) =>
+          /^https?:\/\//.test(segment) ? (
+            <a key={k} href={segment} target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 break-all">{segment}</a>
+          ) : segment
+        )}
       </span>
     ));
   });
