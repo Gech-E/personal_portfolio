@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 from openai import OpenAI
 from services.retrieval import retrieve
+from services.pinecone_store import configured as pinecone_configured, vector_search
 from services.intent_classifier import classify_intent
 
 logger = logging.getLogger("portfolio.rag")
@@ -64,7 +65,15 @@ def process_query(query: str, message_history: Optional[List[dict]] = None) -> R
     intent, confidence = classify_intent(query)
     if intent == "unknown" and lookup != query:
         intent, confidence = classify_intent(lookup)
-    ranked = retrieve(lookup, intent=intent if intent != "unknown" else None, top_k=5)
+    chosen_intent = intent if intent != "unknown" else None
+    ranked = []
+    if pinecone_configured():
+        try:
+            ranked = vector_search(lookup, intent=chosen_intent, top_k=6)
+        except Exception as exc:
+            logger.warning("Pinecone unavailable (%s); using local evidence retrieval", type(exc).__name__)
+    if not ranked:
+        ranked = retrieve(lookup, intent=chosen_intent, top_k=5)
     if not ranked:
         return RAGResult(NO_EVIDENCE, intent=intent, mode="no_match")
     documents = {c["id"]: c for c, _ in ranked}
