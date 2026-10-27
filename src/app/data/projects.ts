@@ -22,7 +22,7 @@ const projects: Project[] = [
     "id": "nexus-learnai",
     "title": "Nexus LearnAI",
     "category": "EdTech",
-    "desc": "Offline-aware learning platform exploring course delivery, assessments, progress tracking, and AI-assisted study tools.",
+    "desc": "Offline-aware EdTech portfolio project for courses, assessments, progress tracking and AI-assisted learning; advanced features remain in development.",
     "tags": [
       "Next.js",
       "FastAPI",
@@ -72,19 +72,6 @@ const projects: Project[] = [
     "featured": true
   },
   {
-    "id": "nexus-incubation",
-    "title": "Nexus AI Incubation",
-    "category": "AI Products",
-    "desc": "Startup incubation concept with idea evaluation, AI mentorship, matching, and progress tracking.",
-    "tags": [
-      "Next.js",
-      "TypeScript",
-      "PostgreSQL"
-    ],
-    "githubUrl": "https://github.com/Gech-E/NEXUS-AI",
-    "featured": true
-  },
-  {
     "id": "portfolio-rag",
     "title": "Portfolio & RAG Assistant",
     "category": "Full Stack",
@@ -103,7 +90,7 @@ const projects: Project[] = [
     "id": "supportpilot",
     "title": "SupportPilot",
     "category": "AI Products",
-    "desc": "Multi-tenant AI customer support platform; foundation includes workspaces, authentication and database tenant isolation.",
+    "desc": "AI customer-support SaaS prototype with tenant-aware authentication and workspaces; document ingestion and RAG features are on the roadmap.",
     "tags": [
       "Python",
       "FastAPI",
@@ -116,7 +103,7 @@ const projects: Project[] = [
     "id": "portfolioai",
     "title": "PortfolioAI",
     "category": "AI Products",
-    "desc": "AI-powered portfolio and career tooling with a web app, API, and dedicated AI service.",
+    "desc": "AI portfolio-builder project combining a Next.js app, NestJS API and FastAPI AI service; work in progress.",
     "tags": [
       "Next.js",
       "NestJS",
@@ -129,7 +116,7 @@ const projects: Project[] = [
     "id": "mu-innovation-hub",
     "title": "MU Innovation Hub",
     "category": "AI Products",
-    "desc": "AI-powered university startup incubation with idea evaluation, mentoring and progress dashboards.",
+    "desc": "University startup-incubation platform for idea evaluation, mentoring, matchmaking, and progress tracking.",
     "tags": [
       "Next.js",
       "FastAPI",
@@ -182,74 +169,13 @@ const projects: Project[] = [
     "id": "skinvision",
     "title": "SkinVision AI",
     "category": "HealthTech",
-    "desc": "Computer vision application exploring skin image classification and a web-based inference interface.",
+    "desc": "Computer vision skin-image classification app with a React interface and FastAPI inference backend; research prototype, not a diagnostic tool.",
     "tags": [
       "Python",
       "PyTorch",
       "React"
     ],
     "githubUrl": "https://github.com/Gech-E/skinvision-ai",
-    "featured": false
-  },
-  {
-    "id": "careconnect",
-    "title": "CareConnect",
-    "category": "HealthTech",
-    "desc": "Telehealth software project focused on patient access, care communication and health record workflows.",
-    "tags": [
-      "Python",
-      "HealthTech"
-    ],
-    "githubUrl": "https://github.com/Gech-E/CareConnect-",
-    "featured": false
-  },
-  {
-    "id": "ecommerce",
-    "title": "Multi-vendor Ecommerce",
-    "category": "Full Stack",
-    "desc": "React-based multi-vendor shopping application and frontend experiment.",
-    "tags": [
-      "React",
-      "JavaScript"
-    ],
-    "githubUrl": "https://github.com/Gech-E/Ecommerce",
-    "featured": false
-  },
-  {
-    "id": "underage-savings",
-    "title": "Underage Saving Bank System",
-    "category": "Other",
-    "desc": "Educational banking project about savings goals and financial literacy for younger users.",
-    "tags": [
-      "Java",
-      "Finance",
-      "Education"
-    ],
-    "githubUrl": "https://github.com/Gech-E/Underage-Saving-Bank-System",
-    "featured": false
-  },
-  {
-    "id": "earlier-portfolio",
-    "title": "Earlier Portfolio",
-    "category": "Full Stack",
-    "desc": "An earlier iteration of my developer portfolio and project showcase.",
-    "tags": [
-      "React",
-      "JavaScript",
-      "FastAPI"
-    ],
-    "githubUrl": "https://github.com/Gech-E/portfolio",
-    "featured": false
-  },
-  {
-    "id": "python-experiments",
-    "title": "Personal Projects",
-    "category": "Other",
-    "desc": "Collection of earlier Python experiments and learning projects.",
-    "tags": [
-      "Python"
-    ],
-    "githubUrl": "https://github.com/Gech-E/personal_projects",
     "featured": false
   }
 ];
