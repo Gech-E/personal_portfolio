@@ -25,8 +25,8 @@ INTENT_PATTERNS: dict[str, list[tuple[str, int]]] = {
     ],
     "projects": [
         ("project", 10), ("built", 8), ("build", 7), ("portfolio", 6),
-        ("vendor", 8), ("e-commerce", 8), ("ecommerce", 8), ("clinical", 8),
-        ("skin cancer", 10), ("anomaly", 8), ("job matching", 8),
+        ("vendor", 8), ("devtrack", 9), ("nexus", 8), ("e-commerce", 8), ("ecommerce", 8), ("clinical", 8),
+        ("skin cancer", 10), ("anomaly", 8), ("job matching", 8), ("supportpilot", 9), ("portfolioai", 9), ("learnai", 9), ("incubation", 8),
         ("recommendation", 6), ("system", 3), ("application", 4), ("app", 3),
     ],
     "education": [
@@ -37,7 +37,7 @@ INTENT_PATTERNS: dict[str, list[tuple[str, int]]] = {
     "experience": [
         ("experience", 10), ("work", 7), ("job", 7), ("intern", 10),
         ("internship", 10), ("company", 7), ("role", 6), ("position", 6),
-        ("memi", 10), ("gemed", 10), ("born to win", 10),
+        ("memi", 10), ("gemed", 10), ("born to win", 10), ("qubos", 10), ("march research", 10), ("instructor", 8),
         ("cto", 10), ("co-founder", 10), ("founder", 8), ("coordinator", 8),
         ("career", 7), ("professional", 5), ("working", 5),
     ],
@@ -64,7 +64,7 @@ PERSONAL_PATTERNS = [
     "girlfriend", "boyfriend", "married", "wife", "husband", "family",
     "religion", "political", "age", "old", "birthday", "born",
     "zodiac", "height", "weight", "salary", "money", "income",
-    "personal life", "private", "secret", "love", "hate", "feel",
+    "personal life", "private", "secret", "love", "hate",
     "opinion", "believe", "think about",
 ]
 
@@ -96,17 +96,17 @@ def classify_intent(query: str) -> Tuple[str, float]:
 
     # Check greetings first
     for pattern in GREETING_PATTERNS:
-        if q.startswith(pattern) or q == pattern:
+        if q == pattern or q == pattern + "!" or q == pattern + ".":
             return "greeting", 1.0
 
     # Check thanks
     for pattern in THANK_PATTERNS:
-        if q.startswith(pattern) or q == pattern:
+        if q == pattern or q == pattern + "!" or q == pattern + ".":
             return "thanks", 1.0
 
     # Check personal/off-topic
     for pattern in PERSONAL_PATTERNS:
-        if pattern in q:
+        if (" " + pattern + " ") in (" " + q + " "):
             return "personal", 0.9
 
     # Score each intent
