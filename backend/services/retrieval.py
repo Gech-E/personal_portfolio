@@ -1,258 +1,31 @@
-"""
-Hybrid retrieval engine — Dense (sentence-transformers embeddings) + Sparse (BM25).
-Uses Reciprocal Rank Fusion (RRF) to combine results.
-Embeddings are computed once at startup and cached in memory.
-"""
+"""Curated portfolio knowledge with a lightweight, relevance-gated lexical index."""
+import json
+import re
+from pathlib import Path
 
-import os
-import logging
-import threading
-from typing import List, Optional
-
-import numpy as np
-from rank_bm25 import BM25Okapi
-
-from services.knowledge_base import RESUME_CHUNKS, ResumeChunk
-
-logger = logging.getLogger("portfolio.retrieval")
-
-
-# ─── Module-level state (initialized at startup) 
-
-_embeddings: Optional[np.ndarray] = None  # (num_chunks, embedding_dim)
-_bm25: Optional[BM25Okapi] = None
-_initialized = False
-_embed_model = None  # Lazy-loaded sentence-transformers model
-_model_lock = threading.Lock()  # Thread safety for model loading
-
-
-# ─── Embedding Helpers 
-
-def _get_embed_model():
-    """Lazy-load the sentence-transformers model (thread-safe, optional)."""
-    global _embed_model
-    if _embed_model is None:
-        with _model_lock:
-            if _embed_model is None:
-                try:
-                    from sentence_transformers import SentenceTransformer
-                    _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
-                    logger.info("Loaded sentence-transformers model: all-MiniLM-L6-v2")
-                except ImportError:
-                    logger.info("sentence-transformers not installed; relying on pre-computed embeddings and BM25")
-                    _embed_model = False
-    return _embed_model if _embed_model is not False else None
-
-
-def _embed_texts(texts: List[str]) -> Optional[np.ndarray]:
-    """Embed a list of texts using sentence-transformers if available."""
-    model = _get_embed_model()
-    if model is None:
-        return None
-    return model.encode(texts, convert_to_numpy=True).astype(np.float32)
-
-
-def _embed_query(query: str) -> Optional[np.ndarray]:
-    """Embed a single query string if available."""
-    model = _get_embed_model()
-    if model is None:
-        return None
-    return model.encode(query, convert_to_numpy=True).astype(np.float32)
-
-
-# ─── Initialization 
-
-def _tokenize(text: str) -> List[str]:
-    """Simple whitespace tokenizer for BM25."""
-    return text.lower().split()
-
-
-def initialize():
-    """
-    Compute embeddings for all chunks and build the BM25 index.
-    Call this once at application startup.
-    """
-    global _embeddings, _bm25, _initialized
-
-    if _initialized:
-        return
-
-    # Build BM25 index
-    corpus = [
-        _tokenize(f"{c['content']} {' '.join(c['keywords'])}")
-        for c in RESUME_CHUNKS
-    ]
-    _bm25 = BM25Okapi(corpus)
-
-    # Load dense embeddings from pre-computed cache
-    try:
-        emb_path = os.path.join(os.path.dirname(__file__), 'embeddings.npy')
-        if os.path.exists(emb_path):
-            _embeddings = np.load(emb_path)
-            logger.info(
-                "Loaded pre-computed embeddings from %s (%dd)",
-                emb_path, _embeddings.shape[1],
-            )
-        else:
-            logger.warning("No embeddings.npy found — run cache_embeddings.py first")
-            # Fallback to computing on the fly using sentence-transformers
-            try:
-                texts = [c["content"] for c in RESUME_CHUNKS]
-                _embeddings = _embed_texts(texts)
-                logger.info("Embedded %d chunks dynamically", len(texts))
-            except Exception as e:
-                logger.error("Dynamic embedding failed: %s", e)
-                _embeddings = None
-    except Exception as e:
-        logger.error("Embedding initialization failed: %s", e)
-        _embeddings = None
-
-    _initialized = True
-    logger.info("Retrieval engine initialized (%d chunks)", len(RESUME_CHUNKS))
-
-
-# ─── Dense Retrieval 
-
-def _cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
-    """Compute cosine similarity between two vectors."""
-    norm_a = np.linalg.norm(a)
-    norm_b = np.linalg.norm(b)
-    if norm_a == 0 or norm_b == 0:
-        return 0.0
-    return float(np.dot(a, b) / (norm_a * norm_b))
-
-
-def _dense_retrieve(query: str, top_k: int = 10) -> List[tuple[int, float]]:
-    """
-    Retrieve chunks by embedding similarity.
-    Returns list of (chunk_index, similarity_score).
-    """
-    if _embeddings is None:
-        return []
-
-    try:
-        query_emb = _embed_query(query)
-        if query_emb is None:
-            return []
-    except Exception as e:
-        logger.error("Query embedding failed: %s", e)
-        return []
-
-    # Compute similarities
-    similarities = []
-    for i in range(len(RESUME_CHUNKS)):
-        sim = _cosine_similarity(query_emb, _embeddings[i])
-        similarities.append((i, sim))
-
-    # Sort by similarity descending
-    similarities.sort(key=lambda x: x[1], reverse=True)
-    return similarities[:top_k]
-
-
-# ─── Sparse Retrieval (BM25) ────────────────────
-
-def _sparse_retrieve(query: str, top_k: int = 10) -> List[tuple[int, float]]:
-    """
-    Retrieve chunks using BM25.
-    Returns list of (chunk_index, bm25_score).
-    """
-    if _bm25 is None:
-        return []
-
-    tokens = _tokenize(query)
-    scores = _bm25.get_scores(tokens)
-
-    indexed_scores = [(i, float(s)) for i, s in enumerate(scores)]
-    indexed_scores.sort(key=lambda x: x[1], reverse=True)
-    return indexed_scores[:top_k]
-
-
-# ─── Reciprocal Rank Fusion ─────────────────────
-
-def _reciprocal_rank_fusion(
-    *ranked_lists: List[tuple[int, float]],
-    k: int = 60,
-) -> List[tuple[int, float]]:
-    """
-    Combine multiple ranked result lists using RRF.
-    k=60 is the standard constant from the RRF paper.
-    """
-    fused_scores: dict[int, float] = {}
-
-    for ranked_list in ranked_lists:
-        for rank, (doc_idx, _score) in enumerate(ranked_list):
-            if doc_idx not in fused_scores:
-                fused_scores[doc_idx] = 0.0
-            fused_scores[doc_idx] += 1.0 / (k + rank + 1)
-
-    # Sort by fused score descending
-    results = sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
-    return results
-
-
-# ─── Public API ──────────────────────────────────────────────────────────────
-
-def retrieve(
-    query: str,
-    intent: Optional[str] = None,
-    top_k: int = 5,
-) -> List[tuple[ResumeChunk, float]]:
-    """
-    Hybrid retrieval: dense + sparse + intent-based injection.
-
-    Strategy:
-    1. Run dense + sparse retrieval and fuse with RRF
-    2. If a valid intent is detected, GUARANTEE that all intent-matched
-       chunks appear in the results (inject them at the top)
-    3. Fill remaining slots from the fused ranking
-
-    Args:
-        query: The user's question
-        intent: Classified intent (e.g. "skills", "projects")
-        top_k: Number of chunks to return
-
-    Returns:
-        List of (chunk, score) tuples, sorted by relevance.
-    """
-    if not _initialized:
-        initialize()
-
-    # Run both retrievers
-    dense_results = _dense_retrieve(query, top_k=15)
-    sparse_results = _sparse_retrieve(query, top_k=15)
-
-    # Fuse results
-    fused = _reciprocal_rank_fusion(dense_results, sparse_results)
-
-    # Build result set with intent injection
-    results: List[tuple[ResumeChunk, float]] = []
-    used_ids: set[str] = set()
-
-    if intent and intent not in ("greeting", "thanks", "personal", "unknown"):
-        # First: inject all chunks matching the intent, ordered by their fused score
-        intent_chunks = []
-        for doc_idx, score in fused:
-            chunk = RESUME_CHUNKS[doc_idx]
-            if chunk["category"] == intent:
-                intent_chunks.append((chunk, score * 2.0))  # Strong boost
-                used_ids.add(chunk["id"])
-
-        # If no intent chunks came from fusion, pull them directly from the KB
-        if not intent_chunks:
-            for i, chunk in enumerate(RESUME_CHUNKS):
-                if chunk["category"] == intent:
-                    intent_chunks.append((chunk, 0.5))  # Base score
-                    used_ids.add(chunk["id"])
-
-        results.extend(intent_chunks)
-
-    # Fill remaining slots from the fused ranking
-    for doc_idx, score in fused:
-        if len(results) >= top_k:
-            break
-        chunk = RESUME_CHUNKS[doc_idx]
-        if chunk["id"] not in used_ids:
-            results.append((chunk, score))
-            used_ids.add(chunk["id"])
-
-    return results[:top_k]
+_PATH = Path(__file__).resolve().parents[2] / "public" / "portfolio-knowledge.json"
+_DATA = json.loads(_PATH.read_text(encoding="utf-8"))
+RESUME_CHUNKS = [
+    {**c, "subcategory": c["title"], "keywords": c["keywords"].split()}
+    for c in _DATA["chunks"]
+]
+STOP = set("a an the is are was were what who how where when can does did he his him she her i you me my about please tell show give list of on in at for to with and or from into have has do some more project projects getachew ekubay".split())
+ALIASES={"rag":"retrieval augmented generation","llm":"large language model","cv":"computer vision","ml":"machine learning","ai":"artificial intelligence","job":"experience","work":"experience","school":"education","gpa":"cgpa","code":"github","repo":"github","repository":"github","teacher":"instructor"}
+def tokens(text):
+    words=re.findall(r"[a-z0-9]+(?:[.+#-][a-z0-9]+)*",text.lower())
+    return {ALIASES.get(w,w) for w in words if w not in STOP and len(w)>1}
+def retrieve(query, intent=None, top_k=5):
+    q=tokens(query)
+    if not q:return []
+    ranked=[]
+    for c in RESUME_CHUNKS:
+        title=tokens(c["title"]); keywords=tokens(" ".join(c["keywords"])); body=tokens(c["content"])
+        common=q & (title|keywords|body)
+        if not common:continue
+        score=sum(4 if term in title else 2 if term in keywords else 1 for term in common)/max(1,len(q))
+        if intent==c["category"]:score+=0.65
+        if intent=="projects" and c["id"]=="projects-overview" and ({"all","overview"}&q):score+=2
+        ranked.append((c,round(score,3)))
+    ranked.sort(key=lambda x:x[1],reverse=True)
+    return ranked[:top_k]
+def initialize():return len(RESUME_CHUNKS)
